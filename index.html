@@ -1204,17 +1204,17 @@ async function syncWorld(g, total) {
       if (!(res.ok || res.status === 409)) throw new Error('save ' + res.status);   // 409 = this device already sent today's score
       rec.sent = true; saveStore();
     }
-    const res2 = await api('rpc/day_rank', { p_day: g.n, p_total: total }, true);
+    const res2 = await api('rpc/day_rank', { p_day: g.n, p_total: total, p_level: g.level || 'easy' }, true);
     if (!res2.ok) throw new Error('rank ' + res2.status);
     const w = await res2.json();
     if (!game || game.n !== g.n || game.phase !== 'final') return;
-    renderWorld(w, total);
+    renderWorld(w, total, levelOf(g.level));
   } catch (e) {
     line.className = 'world small';
     line.textContent = "Couldn't reach the world rankings just now. Your score is saved on this device and will be sent next time you open the game.";
   }
 }
-function renderWorld(w, total) {
+function renderWorld(w, total, L) {
   const line = $('worldLine'), sub = $('worldSub'); const n = w.players || 0;
   if (n < 5) {
     line.className = 'world small';
@@ -1222,7 +1222,9 @@ function renderWorld(w, total) {
   } else {
     worldPct = Math.round(100 * (w.below || 0) / (n - 1));
     line.className = 'world'; line.innerHTML = ''; line.append('You beat '); const b = document.createElement('b'); b.textContent = worldPct + '%'; line.append(b, " of today's sailors");
-    sub.hidden = false; sub.textContent = `${fmt(n)} players so far today. Everyone gets the same five spots.`;
+    const ln = w.level_players || 0;
+    const lvl = ln >= 5 ? ` You also beat ${Math.round(100 * (w.level_below || 0) / (ln - 1))}% of the ${fmt(ln)} on ${L.name}.` : '';
+    sub.hidden = false; sub.textContent = `${fmt(n)} players so far today.${lvl}`;
   }
   const h = $('worldHist'); h.innerHTML = ''; const hist = w.hist || []; const mx = Math.max(1, ...hist); const mine = Math.min(5, Math.floor(total / 5000));
   if (n >= 2) ['0-5k', '5k-10k', '10k-15k', '15k-20k', '20k-25k', '25k+'].forEach((lab, i) => {
