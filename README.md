@@ -2,7 +2,7 @@
 
 A daily straight-line sailing game. Ten real coastal spots a day: pick a heading, your boat sails dead straight around the curve of the Earth until it hits land, and you score against the longest voyage possible.
 
-Ways to play: the daily voyage (same spots and rules for everyone, ranked worldwide), head-to-head duels (20,000 HP each; the shorter voyage loses the difference in km), live duels against a friend from a shared link, and practice. Spots come from a pool of 1,909 real coastal starting points.
+Ways to play: the daily voyage (same spots and rules for everyone, ranked worldwide), head-to-head duels on Easy, Medium or Hard (50,000 HP each; the shorter voyage loses the difference in km, times the winner's multiplier), live duels against a friend from a shared link, and practice. Spots come from a pool of 1,909 real coastal starting points.
 
 Play: https://stevomaccork.github.io/magellan/
 

@@ -342,7 +342,8 @@ body.duel .brand { display: none; }
 .modeswitch { position: absolute; left: 0; top: 58px; display: flex; background: var(--glass); border: 2px solid rgba(255,255,255,.22); border-radius: 999px; padding: 3px; pointer-events: auto; }
 .modeswitch button { border: 0; border-radius: 999px; background: none; color: var(--foam); font: 900 13.5px var(--body); padding: 7px 13px; cursor: pointer; min-height: 34px; }
 .modeswitch button[aria-checked="true"] { background: var(--sun); color: var(--ink); }
-body.fixedview .tools { display: none; }
+body.fixedview #home { display: none; }
+body.fixedview.zoomed #home { display: grid; }
 /* 15-second lock-in timer */
 .timer { height: 8px; border-radius: 4px; background: rgba(29, 106, 163, .15); overflow: hidden; margin-bottom: -2px; }
 .timer i { display: block; height: 100%; width: 100%; background: var(--sea); border-radius: 4px; }
@@ -375,6 +376,18 @@ table.duel td.dmg { white-space: nowrap; }
 .toast small:empty { display: none; }
 /* friend lobby */
 .field { display: grid; gap: 5px; font-size: 13px; font-weight: 900; color: var(--ink-soft); }
+/* duel difficulty: three options, each saying what changes */
+.diffpick { border: 0; margin: 0; padding: 0; display: grid; gap: 6px; min-width: 0; }
+#matchDiff legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.diffpick legend { padding: 0; margin-bottom: 5px; font-size: 13px; font-weight: 900; color: var(--ink-soft); }
+.dp { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start; padding: 9px 12px; border: 2px solid var(--line); border-radius: 14px; background: var(--foam); cursor: pointer; }
+.dp input { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; margin: 1px 0 0; border: 2px solid rgba(11, 42, 66, .35); border-radius: 50%; background: var(--foam); cursor: pointer; }
+.dp input:checked { border-color: var(--ink); background: radial-gradient(circle, var(--ink) 0 4.5px, var(--foam) 5px); }
+.dp input:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+.dp b { display: block; font: 400 19px/1.1 var(--display); color: var(--ink); }
+.dp span span { display: block; font-size: 13px; color: var(--ink-soft); line-height: 1.3; margin-top: 2px; }
+.dp:has(input:checked) { border-color: var(--ink); background: rgba(29, 106, 163, .08); }
+@media (hover: hover) and (pointer: fine) { .dp:hover { border-color: rgba(11, 42, 66, .4); } }
 .field input, .linkbox input { font: 800 17px var(--body); color: var(--ink); background: var(--foam); border: 2px solid var(--line); border-radius: 12px; padding: 10px 12px; min-width: 0; -webkit-user-select: text; user-select: text; }
 .field input:focus, .linkbox input:focus { outline: 3px solid var(--sun); outline-offset: 1px; }
 .linkbox { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
@@ -477,14 +490,14 @@ td.won { color: var(--coral-deep); font-weight: 900; }
       <p class="goal">Sail as far as you can in a <b>dead straight line</b>.</p>
       <div class="demo"><canvas id="demo" role="img" aria-label="Demo: a boat off Cape Clear aims south-west, sails dead straight around the globe and runs aground in Papua New Guinea"></canvas><span class="demo-cap" id="demoCap" aria-hidden="true"></span></div>
       <ol class="howsteps">
-        <li><b>Aim.</b> Drag on the globe to point your boat. Fine-tune with the compass tape or the ±0.1° buttons. The globe stays centred on you, so your course is a straight line until it goes round the back.</li>
-        <li><b>Sail.</b> One go per spot. Your boat follows the curve of the Earth, dead straight, until it hits land. Every island counts, so check the close-up circle.</li>
+        <li><b>Aim.</b> Drag on the globe to point your boat. Fine-tune with the compass tape or the ±0.1° buttons. The globe stays centred on you, so your course is a straight line until it goes round the back. Pinch or scroll to zoom in around your boat: up close you see the exact land your boat can hit.</li>
+        <li><b>Sail.</b> One go per spot. Your boat follows the curve of the Earth, dead straight, until it hits land. Every island counts, so zoom in or check the close-up circle.</li>
         <li><b>Score.</b> Up to 5,000 points a spot. The closer you get to the longest voyage possible from there, the more you score.</li>
       </ol>
       <p class="tip"><b>Tip:</b> a straight line on a globe looks curved on a flat map. Trust the globe, not the map in your head.</p>
       <ul class="modes">
         <li><b>Daily Voyage:</b> 10 spots, the same for everyone and the same rules. A new one every midnight, ranked worldwide.</li>
-        <li><b>Head to head:</b> a duel. Both start with 50,000 HP. Win a round and you hit the other sailor for the difference in km, times your multiplier. Every round you win raises it for next time: ×1, ×1.5, ×2, then ×2.5. Each round has a 60-second clock, and once one sailor locks in, the other has 15 seconds.</li>
+        <li><b>Head to head:</b> a duel. Both start with 50,000 HP. Win a round and you hit the other sailor for the difference in km, times your multiplier. Every round you win raises it for next time: ×1, ×1.5, ×2, then ×2.5. Each round has a 60-second clock, and once one sailor locks in, the other has 15 seconds. Pick Easy, Medium or Hard first: harder duels bring trickier spots and a shorter guide line.</li>
         <li><b>Challenge a friend:</b> send a link and duel live.</li>
         <li><b>Practice:</b> random spots, no score. Switch to Explore to spin the globe, and try any spot again.</li>
       </ul>
@@ -512,14 +525,15 @@ td.won { color: var(--coral-deep); font-weight: 900; }
 
 <div class="modal" id="matching" hidden>
   <div class="card" role="dialog" aria-modal="true" aria-labelledby="matchTitle">
-    <div><span class="eyebrow">Head to head</span><h2 class="sheet-h" id="matchTitle">Finding a sailor...</h2></div>
-    <div class="vs">
+    <div><span class="eyebrow" id="matchEyebrow">Head to head</span><h2 class="sheet-h" id="matchTitle">Finding a sailor...</h2></div>
+    <fieldset class="diffpick" id="matchDiff"><legend>Difficulty</legend></fieldset>
+    <div class="vs" id="matchVs">
       <div class="side"><span class="avatar you">You</span><span>You</span></div>
       <span class="vsx">vs</span>
       <div class="side"><span class="avatar searching" id="oppAvatar">?</span><span id="oppName">Searching</span></div>
     </div>
     <p class="note" id="matchNote"></p>
-    <div class="btnrow lead" id="matchBtns"><button class="ghost" id="matchCancel">Cancel</button><button class="primary" id="matchGo" hidden>Start duel</button></div>
+    <div class="btnrow lead" id="matchBtns"><button class="ghost" id="matchCancel">Cancel</button><button class="primary" id="matchFind">Find a sailor</button><button class="primary" id="matchGo" hidden>Start duel</button></div>
   </div>
 </div>
 
@@ -528,6 +542,7 @@ td.won { color: var(--coral-deep); font-weight: 900; }
     <div><span class="eyebrow" id="lobbyEyebrow">Challenge a friend</span><h2 class="sheet-h" id="lobbyTitle">Duel a friend</h2></div>
     <p class="note" id="lobbyNote"></p>
     <label class="field" id="nameField"><span>Your name</span><input id="nameInput" maxlength="16" autocomplete="nickname" placeholder="Sailor" enterkeyhint="go"></label>
+    <fieldset class="diffpick" id="lobbyDiff" hidden><legend>Difficulty</legend></fieldset>
     <div class="linkbox" id="linkBox" hidden><input id="linkInput" readonly aria-label="Challenge link"><button type="button" class="ghost" id="copyLinkBtn">Copy</button></div>
     <div class="vs" id="lobbyVs" hidden>
       <div class="side"><span class="avatar you">You</span><span id="lobbyMe">You</span></div>
@@ -613,7 +628,23 @@ const LEVELS = {
 };
 const STANDARD = 'normal';
 const levelOf = id => LEVELS[id] || LEVELS.normal;
-const level = () => levelOf(game && game.level);
+// Duel difficulty. HP, damage, multipliers and the clock are the same on every level; what changes is which spots
+// come up (tier 0 = open water with a wide window of good headings, tier 4 = a narrow gap) and how much of your
+// course the guide line draws. form scales the list sailors' accuracy, since everyone does worse on harder spots.
+const DUEL_LEVELS = {
+  easy: { ...LEVELS.normal, id: 'easy', name: 'Easy', preview: 6000, form: 1.06, tiers: [0, 0, 1, 0, 1, 1, 2, 1, 2, 1, 2, 2],
+    blurb: 'Open water, wide gaps to aim through. 6,000 km guide line.' },
+  normal: { ...LEVELS.normal, name: 'Medium', form: 1, tiers: [0, 1, 2, 3, 4, 2, 3, 4, 3, 4, 4, 4],
+    blurb: 'A mix of open water and tight spots, like the Daily Voyage. 2,500 km guide line.' },
+  hard: { ...LEVELS.normal, id: 'hard', name: 'Hard', preview: 1500, form: 0.9, tiers: [3, 3, 4, 3, 4, 4, 3, 4, 4, 4, 4, 4],
+    blurb: 'Island mazes and narrow straits. 1,500 km guide line.' },
+};
+const DUEL_ORDER = ['easy', 'normal', 'hard'];
+const duelLevelOf = id => DUEL_LEVELS[id] || DUEL_LEVELS.normal;
+const level = () => (game && game.mode === 'h2h' ? duelLevelOf(game.level) : levelOf(game && game.level));
+// a friend duel's difficulty travels with its data version ('p6' is Medium, 'p6.hard' is Hard), so the database needs no change
+const duelVer = lv => (lv && lv !== 'normal' && DUEL_LEVELS[lv] ? `${DATA.ver}.${lv}` : DATA.ver);
+const parseVer = v => { const [ver, lv] = String(v || '').split('.'); return { ver, lv: DUEL_LEVELS[lv] ? lv : 'normal' }; };
 // Site settings come from config.js (see site/config.js); without it the game runs fully offline.
 const CFG = window.MAGELLAN_CONFIG || {};
 const LAUNCH = /^\d{4}-\d{2}-\d{2}$/.test(CFG.launch || '') ? Date.parse(CFG.launch + 'T00:00:00Z') : Date.UTC(2026, 10, 5);
@@ -621,6 +652,7 @@ const LAUNCH = /^\d{4}-\d{2}-\d{2}$/.test(CFG.launch || '') ? Date.parse(CFG.lau
 const SHARE_URL = CFG.shareUrl || (window.MAGELLAN_CONFIG ? location.origin + location.pathname.replace(/index\.html$/, '') : 'https://claude.ai/artifact/56XRnwG3Vc5KLmJ9wmJDoa');
 const ONLINE = /^https:\/\/[^ ]+$/.test(CFG.supabaseUrl || '') && !!CFG.supabaseKey && !/PASTE/.test(CFG.supabaseKey + CFG.supabaseUrl);
 const STORE_KEY = 'landfall-v2';
+const touchy = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
 const reduceMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 const $ = id => document.getElementById(id);
 let MASK, CGRID, IGRID, LAND50, LAND110, GRAT;
@@ -814,19 +846,20 @@ const levelMinR = () => { const L = level(); return L.span ? Math.min(W, H) * RE
 const limited = () => !!(game && ['arriving', 'aim', 'sailing', 'sailed'].includes(game.phase));
 const minRNow = () => (limited() ? Math.max(BASE * 0.4, levelMinR()) : BASE * 0.4);
 const R_ = { close: () => BASE * 12, aim: () => BASE * 0.47, cruise: () => BASE * 0.46, crash: () => BASE * 3, world: () => BASE * 0.5 };
-// while aiming on a fixed level the globe stays centred on the boat: no spinning, no zooming
+// while aiming on a fixed level the globe stays centred on the boat: you can zoom in and out, but not spin it
 const fixedAim = () => !!(game && cur && ['arriving', 'aim', 'locked'].includes(game.phase) && level().fixed);
 function measure() { const r = stageEl.getBoundingClientRect(); CX = r.left + r.width / 2; CY = r.top + r.height / 2; layerKey = ''; }
 function resize() {
   DPR = Math.min(2, window.devicePixelRatio || 1);
   W = window.innerWidth; H = window.innerHeight;
   cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
-  const r = stageEl.getBoundingClientRect();
+  const r = stageEl.getBoundingClientRect(), oldBase = BASE;
   BASE = Math.max(160, Math.min(r.width + 32, r.height));
   measure(); drawTape();
-  if (fixedAim() && game.phase !== 'arriving') { view.lat = cur.lat; view.lon = cur.lon; view.R = R_.aim(); }
+  // keep the zoom you had (scaled to the new size), still centred on the boat
+  if (fixedAim() && game.phase !== 'arriving') { view.lat = cur.lat; view.lon = cur.lon; view.R = clampR(view.R * BASE / oldBase); }
 }
-const clampR = R => Math.max(minRNow(), Math.min(BASE * 150, R));
+const clampR = R => Math.max(minRNow(), Math.min(BASE * 300, R));
 
 // ---- camera tweens (queued) ----
 let tweens = [], tw = null;
@@ -855,7 +888,9 @@ function drawLand() {
   const moving = !!(tw || tweens.length || (sailAnim && game && game.phase === 'sailing') || dragLook || pinch);
   // detailed coast whenever the camera is still (small islands show at every zoom), coarse while it moves
   const detail = !moving || view.R > BASE * 2.5;
-  const key = [view.lat.toFixed(5), view.lon.toFixed(5), view.R.toFixed(2), W, H, CX.toFixed(1), CY.toFixed(1), detail].join('|');
+  // zoomed in, the land is drawn from the collision map itself: finer while the camera is still
+  const exact = RE / view.R <= MASK_KMPX, step = exact ? Math.max(1, Math.ceil(Math.sqrt(W * H / (moving ? 140000 : 520000)))) : 0;
+  const key = [view.lat.toFixed(5), view.lon.toFixed(5), view.R.toFixed(2), W, H, CX.toFixed(1), CY.toFixed(1), detail, step].join('|');
   if (key === layerKey) return;
   layerKey = key;
   if (layer.width !== cv.width || layer.height !== cv.height) { layer.width = cv.width; layer.height = cv.height; }
@@ -871,9 +906,51 @@ function drawLand() {
   sea.addColorStop(0, '#2f86c4'); sea.addColorStop(0.7, '#1d6aa3'); sea.addColorStop(1, '#0d3f66');
   c.fillStyle = sea; c.beginPath(); g({ type: 'Sphere' }); c.fill();
   c.strokeStyle = 'rgba(255,255,255,.09)'; c.lineWidth = 1; c.beginPath(); g(GRAT); c.stroke();
+  if (exact) { drawMaskLand(c, view.lat, view.lon, R, CX, CY, W, H, step); return; }
   c.beginPath(); g(detail ? visibleLand50() : LAND110);
   c.fillStyle = '#f1d98f'; c.fill();
   c.strokeStyle = '#b58f3e'; c.lineWidth = R > BASE * 3 ? 1.6 : 1.1; c.stroke();
+}
+// The smooth coastline is a simplified map, so up close it can miss small islands or close a gap that is open.
+// Below MASK_KMPX km a pixel the globe instead draws the collision map (0.02°, about 2 km a cell), so what you see
+// is exactly what the boat hits. A sample bigger than a cell checks every cell it covers, so a one-cell island never
+// slips between samples. Sea and the area off the globe stay transparent.
+const MASK_KMPX = 5;
+const maskOff = document.createElement('canvas'), moctx = maskOff.getContext('2d');
+let maskBits = null;
+function drawMaskLand(c, lat0, lon0, R, cx, cy, w, h, px) {
+  const gw = Math.max(1, Math.ceil(w / px)), gh = Math.max(1, Math.ceil(h / px)), n = gw * gh;
+  if (!maskBits || maskBits.length < n) maskBits = new Uint8Array(n);
+  const bits = maskBits; bits.fill(0, 0, n);
+  const p0 = lat0 * D2R, sp0 = Math.sin(p0), cp0 = Math.cos(p0);
+  const kms = px * RE / R, cellKm = RES * D2R * RE;           // km per sample, km per cell north to south
+  const ni = Math.min(3, Math.max(1, Math.ceil(kms / cellKm)));
+  for (let gy = 0; gy < gh; gy++) {
+    const v = (cy - (gy + 0.5) * px) / R;
+    for (let gx = 0; gx < gw; gx++) {
+      const u = ((gx + 0.5) * px - cx) / R, r2 = u * u + v * v;
+      if (r2 >= 1) continue;
+      const z = Math.sqrt(1 - r2), la = Math.asin(Math.max(-1, Math.min(1, z * sp0 + v * cp0))) * R2D;
+      const lo = lon0 + Math.atan2(u, z * cp0 - v * sp0) * R2D;
+      const nj = Math.min(6, Math.max(1, Math.ceil(kms / (cellKm * Math.max(0.15, Math.cos(la * D2R))))));
+      const i0 = Math.floor((90 - la) / RES) - (ni >> 1), j0 = Math.floor((lo + 180) / RES) - (nj >> 1);
+      let hit = 0;
+      for (let a = 0; a < ni && !hit; a++) {
+        const i = i0 + a < 0 ? 0 : i0 + a > NY - 1 ? NY - 1 : i0 + a;
+        for (let b = 0; b < nj; b++) { if (isLand(i, (((j0 + b) % NX) + NX) % NX)) { hit = 1; break; } }
+      }
+      bits[gy * gw + gx] = hit ? 1 : 2;   // 1 land, 2 sea, 0 off the globe
+    }
+  }
+  if (maskOff.width !== gw || maskOff.height !== gh) { maskOff.width = gw; maskOff.height = gh; }
+  const img = moctx.createImageData(gw, gh), out = new Uint32Array(img.data.buffer);
+  const LAND = 0xff8fd9f1, EDGE = 0xff3e8fb5;   // #f1d98f and #b58f3e as little-endian RGBA
+  for (let y = 0; y < gh; y++) for (let x = 0; x < gw; x++) {
+    const k = y * gw + x; if (bits[k] !== 1) continue;
+    out[k] = (x > 0 && bits[k - 1] === 2) || (x < gw - 1 && bits[k + 1] === 2) || (y > 0 && bits[k - gw] === 2) || (y < gh - 1 && bits[k + gw] === 2) ? EDGE : LAND;
+  }
+  moctx.putImageData(img, 0, 0);
+  c.save(); c.imageSmoothingEnabled = px > 1; c.drawImage(maskOff, 0, 0, gw * px, gh * px); c.restore();
 }
 
 let LAND50P = [];
@@ -1032,6 +1109,7 @@ function frame(now) {
   tickLockTimer(now);
   document.body.classList.toggle('free', freeLook());
   document.body.classList.toggle('fixedview', fixedAim());
+  document.body.classList.toggle('zoomed', view.R > R_.aim() * 1.3);
   const ms = !!(game && cur && ['arriving', 'aim'].includes(game.phase) && !level().fixed);
   if ($('modeSwitch').hidden === ms) $('modeSwitch').hidden = !ms;
   requestAnimationFrame(frame);
@@ -1050,10 +1128,9 @@ function drawCloseup() {
   if (cu.width !== Math.round(w * d)) { cu.width = Math.round(w * d); cu.height = Math.round(w * d); }
   const c = cuctx; c.setTransform(d, 0, 0, d, 0, 0);
   cuProj.rotate([-cur.lon, -cur.lat, 0]).scale((w / 2) / (CLOSE_KM / 2 / RE)).translate([w / 2, w / 2]);
-  const g = d3.geoPath(cuProj, c), here = [cur.lon, cur.lat], near = [];
-  for (const p of LAND50P) if (d3.geoDistance(p.c, here) - p.r < 0.02) near.push(p.coords);
+  const g = d3.geoPath(cuProj, c);
   c.fillStyle = '#1d6aa3'; c.fillRect(0, 0, w, w);
-  c.beginPath(); g({ type: 'MultiPolygon', coordinates: near }); c.fillStyle = '#f1d98f'; c.fill(); c.strokeStyle = '#b58f3e'; c.lineWidth = 1.2; c.stroke();
+  drawMaskLand(c, cur.lat, cur.lon, cuProj.scale(), w / 2, w / 2, w, w, 1 / d);   // the exact land the boat can hit
   c.beginPath(); g({ type: 'LineString', coordinates: routeCoords(cur.lat, cur.lon, heading, CLOSE_KM * 0.7, 1) });
   c.lineCap = 'round'; c.strokeStyle = 'rgba(6,30,50,.45)'; c.lineWidth = 4; c.stroke();
   c.strokeStyle = '#ffffff'; c.lineWidth = 2.2; c.setLineDash([1, 5]); c.stroke(); c.setLineDash([]);
@@ -1130,7 +1207,7 @@ document.addEventListener('keydown', e => {
 });
 
 // ================= globe gestures =================
-const ptrs = new Map(); let pinch = null, dragLook = null;
+const ptrs = new Map(); let pinch = null, dragLook = null, afterPinch = false;
 const hint = $('hint');
 function showHint(text) { hint.textContent = text; hint.classList.toggle('on', !!text); }
 function aimFromPoint(x, y) {
@@ -1153,9 +1230,8 @@ const freeLook = () => view.look || !game || ['sailed', 'reveal', 'final'].inclu
 function interrupt() { stopFly(!!(game && game.phase === 'arriving')); }
 let aimStartH = null;
 cv.addEventListener('pointerdown', e => {
-  cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  try { cv.setPointerCapture(e.pointerId); } catch (err) {} ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (ptrs.size === 2) {
-    if (fixedAim()) return;   // the aiming view is fixed: no pinch zoom
     // a pinch is not an aim: undo what the first finger did
     if (aimStartH !== null && game && game.phase === 'aim') setHeading(aimStartH);
     aimStartH = null; interrupt();
@@ -1175,14 +1251,14 @@ cv.addEventListener('pointermove', e => {
     view.lon = dragLook.lon - (e.clientX - dragLook.x) * k / Math.max(0.35, Math.cos(view.lat * D2R));
     return;
   }
-  if (game && game.phase === 'aim' && !view.look && !pinch) aimFromPoint(e.clientX, e.clientY);
+  if (game && game.phase === 'aim' && !view.look && !pinch && !afterPinch) aimFromPoint(e.clientX, e.clientY);
 });
-function endPtr(e) { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null; if (!ptrs.size) { dragLook = null; aimStartH = null; } }
+function endPtr(e) { ptrs.delete(e.pointerId); if (ptrs.size < 2 && pinch) { pinch = null; afterPinch = true; } if (!ptrs.size) { dragLook = null; aimStartH = null; afterPinch = false; } }
 cv.addEventListener('pointerup', endPtr); cv.addEventListener('pointercancel', endPtr);
 const sailingNow = () => !!(game && game.phase === 'sailing');
-cv.addEventListener('wheel', e => { e.preventDefault(); if (sailingNow() || fixedAim()) return; interrupt(); view.R = clampR(view.R * Math.exp(-e.deltaY * 0.0015)); }, { passive: false });
-$('zin').onclick = () => { if (sailingNow() || fixedAim()) return; interrupt(); fly(view.lat, view.lon, clampR(view.R * 1.8), 350); };
-$('zout').onclick = () => { if (sailingNow() || fixedAim()) return; interrupt(); fly(view.lat, view.lon, clampR(view.R / 1.8), 350); };
+cv.addEventListener('wheel', e => { e.preventDefault(); if (sailingNow()) return; interrupt(); view.R = clampR(view.R * Math.exp(-e.deltaY * 0.0015)); }, { passive: false });
+$('zin').onclick = () => { if (sailingNow()) return; interrupt(); fly(view.lat, view.lon, clampR(view.R * 1.8), 350); };
+$('zout').onclick = () => { if (sailingNow()) return; interrupt(); fly(view.lat, view.lon, clampR(view.R / 1.8), 350); };
 // Aim / Explore switch: practice only. Daily voyages and duels keep the globe fixed while aiming
 function setLook(on) {
   view.look = !!on;
@@ -1197,7 +1273,8 @@ function pickLook(on) {
 $('msAim').onclick = () => pickLook(false);
 $('msLook').onclick = () => pickLook(true);
 $('home').onclick = () => {
-  if (!cur || !game || sailingNow() || fixedAim()) return;
+  if (!cur || !game || sailingNow()) return;
+  if (fixedAim()) { interrupt(); fly(cur.lat, cur.lon, R_.aim(), 450); return; }   // back out to the whole globe
   interrupt(); if (game.phase === 'aim') setLook(false);
   fly(cur.lat, cur.lon, game.phase === 'aim' ? R_.aim() : clampR(Math.max(view.R, R_.world())), 600);
 };
@@ -1251,7 +1328,7 @@ function arrive(fast) {
   setLook(false);
   showCard('aimCard'); $('sailBtn').disabled = true;
   $('locEyebrow').classList.remove('alert'); $('aimCard').classList.remove('sailing'); document.body.classList.remove('sailing');
-  $('locEyebrow').textContent = h2h ? `Round ${game.round + 1} · your multiplier ×${multFor(winsBy(game, 'you'))}`
+  $('locEyebrow').textContent = h2h ? `${level().name} · multiplier ×${multFor(winsBy(game, 'you'))}`
     : game.mode === 'tutorial' ? 'Practice voyage · nothing counts' : '';
   // every spot opens pointing north so the default heading carries no hint; a retry starts from the last heading
   setHeading(r.sails.length ? lastSail(r).h : 0);
@@ -1259,7 +1336,7 @@ function arrive(fast) {
   stopFly(false);
   const done = () => {
     game.phase = 'aim'; $('sailBtn').disabled = false;
-    if (game.round === 0 && r.sails.length === 0 && (game.mode === 'tutorial' || !store.aimHinted)) showHint(game.mode === 'tutorial' ? 'Drag anywhere on the globe to point your boat' : 'Drag on the globe to aim');
+    if (game.round === 0 && r.sails.length === 0 && (game.mode === 'tutorial' || !store.aimHinted)) showHint(game.mode === 'tutorial' ? 'Drag anywhere on the globe to point your boat' : `Drag to aim · ${touchy ? 'pinch' : 'scroll'} to zoom`);
     if (h2h) duelAim();
     snap();
   };
@@ -1494,7 +1571,6 @@ function endTutorial() { store.seen = true; store.tutDone = true; saveStore(); r
 const HP0 = 50000, MAX_ROUNDS = 12, LOCK_MS = 15000, ROUND_MS = 60000;
 const MULT_STEPS = [1, 1.5, 2, 2.5];
 const multFor = wins => MULT_STEPS[Math.min(Math.max(0, wins), MULT_STEPS.length - 1)];   // your multiplier after this many round wins
-const DUEL_TIERS = [0, 1, 2, 3, 4, 2, 3, 4, 3, 4, 4, 4];
 const newRound = () => ({ sails: [], banked: false, done: false, pts: 0 });
 const SAILORS = [['Aoife', 'IE'], ['Cian', 'IE'], ['Niamh', 'IE'], ['Oisín', 'IE'], ['Saoirse', 'IE'], ['Darragh', 'IE'], ['Ciara', 'IE'], ['Fionn', 'IE'],
   ['Tom', 'GB'], ['Hannah', 'GB'], ['Ollie', 'GB'], ['Isla', 'GB'], ['Callum', 'GB'], ['Jake', 'US'], ['Maddie', 'US'], ['Tyler', 'US'], ['Ava', 'US'],
@@ -1510,9 +1586,9 @@ function gauss() { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v 
 function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 const randSeed = () => Math.floor(Math.random() * 2147483647);
 // the same seed gives the same spots on every device, so two friends sail exactly the same course
-function duelPicks(seed) {
+function duelPicks(seed, lv) {
   const rnd = mulberry32(seed), picks = [];
-  for (const t of DUEL_TIERS) {
+  for (const t of duelLevelOf(lv).tiers) {
     const pool = []; DATA.starts.forEach((s, k) => { if (s.tier === t && !s.x) pool.push(k); });
     for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
     const recent = picks.slice(-4);
@@ -1524,9 +1600,9 @@ function duelPicks(seed) {
 }
 // your recent form: the share of the best voyage you reached, averaged over your last 30 spots
 function playerForm() { const r = store.ratios || []; return r.length ? r.reduce((a, b) => a + b, 0) / r.length : 0.5; }
-function newOpponent() {
+function newOpponent(lv) {
   const [name, cc] = SAILORS[Math.floor(Math.random() * SAILORS.length)];
-  return { name, cc, form: +clamp(playerForm() + gauss() * 0.1, 0.2, 0.95).toFixed(3) };
+  return { name, cc, form: +clamp(playerForm() * duelLevelOf(lv).form + gauss() * 0.1, 0.2, 0.95).toFixed(3) };
 }
 // how well the opponent does on one spot, as a share of the best voyage: usually near their form, sometimes perfect, sometimes a blunder
 function oppTarget(o) {
@@ -1709,16 +1785,39 @@ function applyDuelState(st) {
 function claimWin() { if (!game || !game.canClaim) return; game.forfeit = 'opp'; finish(); }
 
 // ---- quick duel against a sailor from the list ----
-let matchTimer = null, pendingOpp = null;
+let matchTimer = null, pendingOpp = null, matchLevel = 'normal';
+const DUEL_RULES = `${fmt(HP0)} HP each. Win a round to hit for the difference in km; each win raises your multiplier (×1, ×1.5, ×2, ×2.5). 60 seconds a round, 15 once one of you locks in.`;
+// the three difficulty options, each with what changes; the last one picked is remembered
+function buildDiffPicker(box, name, sel, onPick) {
+  box.querySelectorAll('label').forEach(l => l.remove());
+  for (const id of DUEL_ORDER) {
+    const L = DUEL_LEVELS[id], lab = document.createElement('label'); lab.className = 'dp';
+    const inp = document.createElement('input'); inp.type = 'radio'; inp.name = name; inp.value = id; inp.checked = id === sel;
+    inp.onchange = () => { if (inp.checked) { store.duelLevel = id; saveStore(); onPick && onPick(id); } };
+    const txt = document.createElement('span'); const b = document.createElement('b'); b.textContent = L.name;
+    const d = document.createElement('span'); d.textContent = L.blurb; txt.append(b, d); lab.append(inp, txt); box.append(lab);
+  }
+}
+const pickedLevel = name => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : 'normal'; };
 function openMatchmaking() {
   resetModes(); closeSheets(); $('matching').hidden = false;
-  pendingOpp = null;
+  pendingOpp = null; clearTimeout(matchTimer);
+  buildDiffPicker($('matchDiff'), 'matchDiff', DUEL_LEVELS[store.duelLevel] ? store.duelLevel : 'normal');
+  $('matchEyebrow').textContent = 'Head to head'; $('matchTitle').textContent = 'Pick a difficulty';
+  $('matchDiff').hidden = false; $('matchVs').hidden = true; $('matchNote').textContent = DUEL_RULES;
+  $('matchFind').hidden = false; $('matchGo').hidden = true; $('matchBtns').style.gridTemplateColumns = '';
+  const sel = document.querySelector('input[name="matchDiff"]:checked'); (sel || $('matchFind')).focus();
+}
+function findSailor() {
+  matchLevel = pickedLevel('matchDiff');
+  const L = duelLevelOf(matchLevel);
   const av = $('oppAvatar'); av.className = 'avatar searching'; av.textContent = '?';
   $('oppName').textContent = 'Searching'; $('matchTitle').textContent = 'Finding a sailor...';
-  $('matchNote').textContent = `Both start with ${fmt(HP0)} HP. The winner of each round hits for the difference in km, and each win raises your multiplier for next time (×1, ×1.5, ×2, ×2.5). 60 seconds a round; once one of you locks in, the other has 15.`;
-  $('matchGo').hidden = true; $('matchBtns').style.gridTemplateColumns = '1fr'; $('matchCancel').focus();
+  $('matchEyebrow').textContent = `Head to head · ${L.name}`;
+  $('matchDiff').hidden = true; $('matchVs').hidden = false; $('matchNote').textContent = L.blurb;
+  $('matchFind').hidden = true; $('matchGo').hidden = true; $('matchBtns').style.gridTemplateColumns = '1fr'; $('matchCancel').focus();
   matchTimer = setTimeout(() => {
-    pendingOpp = newOpponent();
+    pendingOpp = newOpponent(matchLevel);
     av.className = 'avatar found'; av.textContent = flag(pendingOpp.cc);
     $('oppName').textContent = pendingOpp.name; $('matchTitle').textContent = 'Sailor found';
     $('matchGo').hidden = false; $('matchBtns').style.gridTemplateColumns = ''; $('matchGo').focus();
@@ -1727,14 +1826,15 @@ function openMatchmaking() {
 function cancelMatchmaking() { clearTimeout(matchTimer); pendingOpp = null; $('matching').hidden = true; openMenu(store.seen ? 'today' : 'welcome'); }
 function startDuel(kind, opts) {
   resetModes();
-  game = { mode: 'h2h', kind, code: opts.code || null, seed: opts.seed, n: 0, level: STANDARD, opp: opts.opp,
-           picks: duelPicks(opts.seed), rounds: [newRound()], round: 0, their: {}, phase: 'arriving' };
+  const lv = DUEL_LEVELS[opts.level] ? opts.level : 'normal';
+  game = { mode: 'h2h', kind, code: opts.code || null, seed: opts.seed, n: 0, level: lv, opp: opts.opp,
+           picks: duelPicks(opts.seed, lv), rounds: [newRound()], round: 0, their: {}, phase: 'arriving' };
   closeSheets(); persist(); arrive(false);
 }
-const startMatch = opp => startDuel('bot', { opp, seed: randSeed() });
+const startMatch = opp => startDuel('bot', { opp, seed: randSeed(), level: matchLevel });
 function resumeMatch() {
   const m = store.match; resetModes();
-  game = { mode: 'h2h', kind: m.kind || 'bot', code: m.code || null, seed: m.seed, n: 0, level: m.level || STANDARD, opp: m.opp,
+  game = { mode: 'h2h', kind: m.kind || 'bot', code: m.code || null, seed: m.seed, n: 0, level: DUEL_LEVELS[m.level] ? m.level : 'normal', opp: m.opp,
            picks: m.picks, rounds: m.rounds, round: 0, their: m.their || {}, forfeit: m.forfeit || null, phase: 'arriving' };
   closeSheets();
   let idx = game.rounds.findIndex(r => !r.done);
@@ -1752,6 +1852,7 @@ function lobbyView(o) {
   $('lobbyEyebrow').textContent = o.eyebrow || 'Challenge a friend';
   $('lobbyTitle').textContent = o.title; $('lobbyNote').textContent = o.note || ''; $('lobbyNote').hidden = !o.note;
   $('nameField').hidden = !o.name; if (o.name) $('nameInput').value = store.name || '';
+  $('lobbyDiff').hidden = !o.diff; if (o.diff) buildDiffPicker($('lobbyDiff'), 'lobbyDiff', DUEL_LEVELS[store.duelLevel] ? store.duelLevel : 'normal');
   $('linkBox').hidden = !o.link; if (o.link) $('linkInput').value = o.link;
   $('lobbyVs').hidden = !o.vs; $('lobbyStatus').textContent = o.status || '';
   $('lobbyGo').hidden = !o.go; if (o.go) { $('lobbyGo').textContent = o.go; $('lobbyGo').disabled = false; }
@@ -1760,8 +1861,8 @@ function lobbyView(o) {
 }
 function openLobbyHost() {
   resetModes(); closeSheets(); lobby = { role: 'host' };
-  lobbyView({ title: 'Duel a friend, live', name: true, go: 'Create link',
-    note: `You'll get a link to send. The duel starts when your friend opens it. Both start with ${fmt(HP0)} HP; the winner of each round hits for the difference in km, and each win raises your multiplier for next time (×1, ×1.5, ×2, ×2.5).` });
+  lobbyView({ title: 'Duel a friend, live', name: true, diff: true, go: 'Create link',
+    note: "You'll get a link to send. The duel starts when your friend opens it." });
   $('lobby').hidden = false; $('nameInput').focus();
 }
 async function lobbyGo() {
@@ -1773,11 +1874,12 @@ async function lobbyGo() {
 }
 async function createDuel() {
   const name = cleanName($('nameInput').value) || 'Sailor'; store.name = name; saveStore();
+  lobby.level = pickedLevel('lobbyDiff');
   $('lobbyGo').disabled = true; $('lobbyGo').textContent = 'Creating...'; $('lobbyStatus').textContent = '';
   try {
     for (let tries = 0; tries < 3 && !lobby.code; tries++) {
       const code = newCode(), seed = randSeed();
-      const res = await rpc('duel_create', { p_code: code, p_ver: DATA.ver, p_seed: seed, p_device: deviceId(), p_name: name });
+      const res = await rpc('duel_create', { p_code: code, p_ver: duelVer(lobby.level), p_seed: seed, p_device: deviceId(), p_name: name });
       if (res && res.ok) { lobby.code = code; lobby.seed = seed; }
     }
     if (!lobby.code) throw new Error('create');
@@ -1788,7 +1890,7 @@ async function createDuel() {
   lobbyWaiting();
 }
 function lobbyWaiting() {
-  lobbyView({ title: 'Send this link to a friend', link: duelLink(lobby.code), vs: true, go: navigator.share ? 'Share link' : 'Copy link',
+  lobbyView({ eyebrow: `Challenge a friend · ${duelLevelOf(lobby.level).name}`, title: 'Send this link to a friend', link: duelLink(lobby.code), vs: true, go: navigator.share ? 'Share link' : 'Copy link',
     status: 'The duel starts as soon as they open it. Keep this screen open.' });
   lobbyPoll();
 }
@@ -1803,12 +1905,12 @@ function lobbyPoll() {
 function lobbyStarting(st) {
   if (!lobby) return;
   clearTimeout(lobby.timer);
-  lobbyView({ eyebrow: 'Challenge a friend', title: `${st.opp_name} is here!`, vs: true, them: st.opp_name, status: 'Starting the duel...' });
+  lobbyView({ eyebrow: `Duel · ${duelLevelOf(parseVer(st.ver).lv).name}`, title: `${st.opp_name} is here!`, vs: true, them: st.opp_name, status: 'Starting the duel...' });
   const av = $('lobbyAvatar'); av.className = 'avatar found'; av.textContent = (st.opp_name || '?').slice(0, 1).toUpperCase();
   setTimeout(() => { if (!lobby) return; lobby = null; $('lobby').hidden = true; startFriendDuel(st); }, reduceMotion ? 300 : 1500);
 }
 function startFriendDuel(st) {
-  startDuel('friend', { code: st.code, seed: st.seed, opp: { name: st.opp_name || 'Friend', cc: null } });
+  startDuel('friend', { code: st.code, seed: st.seed, level: parseVer(st.ver).lv, opp: { name: st.opp_name || 'Friend', cc: null } });
   duelPollLoop();
 }
 async function shareLink() {
@@ -1833,12 +1935,14 @@ async function openLobbyGuest(code) {
   catch (e) { return lobbyError("Couldn't reach the duel", 'Check your connection and open the link again.'); }
   if (!lobby) return;
   if (!st || !st.found) return lobbyError('This challenge has expired', "The link doesn't work any more. Ask your friend for a new one.");
-  if (st.ver !== DATA.ver) return lobbyError('Reload needed', 'You and your friend are on different versions of the game. Both of you, reload the page and make a new link.');
-  if (st.role === 'host') { lobby.role = 'host'; lobby.seed = st.seed; return st.started ? lobbyStarting(st) : lobbyWaiting(); }
+  const sv = parseVer(st.ver);
+  if (sv.ver !== DATA.ver) return lobbyError('Reload needed', 'You and your friend are on different versions of the game. Both of you, reload the page and make a new link.');
+  if (st.role === 'host') { lobby.role = 'host'; lobby.seed = st.seed; lobby.level = sv.lv; return st.started ? lobbyStarting(st) : lobbyWaiting(); }
   if (st.role === 'guest') return lobbyStarting(st);
   if (st.full) return lobbyError('This duel is full', 'Two sailors are already in it. Ask your friend for a new link.');
-  lobbyView({ eyebrow: 'Duel', title: `${st.host_name} challenged you`, name: true, go: 'Join the duel',
-    note: `A live duel on the same spots. Both start with ${fmt(HP0)} HP; the winner of each round hits for the difference in km, and each win raises your multiplier for next time (×1, ×1.5, ×2, ×2.5). 60 seconds a round; once one of you locks in, the other has 15.` });
+  const L = duelLevelOf(sv.lv);
+  lobbyView({ eyebrow: `Duel · ${L.name}`, title: `${st.host_name} challenged you`, name: true, go: 'Join the duel',
+    note: `A live ${L.name.toLowerCase()} duel on the same spots. ${L.blurb} ${DUEL_RULES}` });
   $('nameInput').focus();
 }
 async function joinDuel() {
@@ -1874,7 +1978,7 @@ function shareText(g) {
     const out = g.outcome || matchOutcome(g), n = roundsDone(g), who = `${g.opp.name}${g.opp.cc ? ' ' + flag(g.opp.cc) : ''}`;
     const sq = g.rounds.filter(r => r.done).map((r, i) => square(Math.max(0, lastSail(r).d), DATA.starts[g.picks[i]].best)).join('');
     const line = g.forfeit ? `Beat ${who}: they left the duel` : out === 'win' ? `Beat ${who} in ${n} round${n === 1 ? '' : 's'}` : out === 'loss' ? `Lost to ${who} in ${n} round${n === 1 ? '' : 's'}` : `Drew with ${who}`;
-    return `Magellan duel ⛵\n${line}\n${sq}\n${fmt(kmYou(g))} km sailed\n${SHARE_URL}`;
+    return `Magellan duel · ${duelLevelOf(g.level).name} ⛵\n${line}\n${sq}\n${fmt(kmYou(g))} km sailed\n${SHARE_URL}`;
   }
   const total = g.rounds.reduce((a, r) => a + r.pts, 0);
   const rows = g.rounds.map((r, i) => square(Math.max(0, bestSail(r).d), DATA.starts[g.picks[i]].best));
@@ -1965,7 +2069,7 @@ function drawHpChart(g) {
 }
 function showMatchFinal() {
   const g = game, o = g.opp, out = g.outcome || matchOutcome(g), [y, oh] = hpOf(g), n = roundsDone(g), friend = g.kind === 'friend';
-  $('finEyebrow').textContent = `${friend ? 'Friend duel' : 'Duel'} vs ${o.name}${o.cc ? ' ' + flag(o.cc) : ''}`;
+  $('finEyebrow').textContent = `${duelLevelOf(g.level).name} ${friend ? 'friend duel' : 'duel'} vs ${o.name}${o.cc ? ' ' + flag(o.cc) : ''}`;
   $('finTotal').textContent = out === 'win' ? 'You win!' : out === 'loss' ? `${o.name} wins` : "It's a draw";
   $('finTotal').classList.add('word');
   $('finRank').textContent = g.forfeit === 'opp' ? `${o.name} left the duel, so it's yours.`
@@ -2192,7 +2296,7 @@ function openMenu(kind) {
   if (live) {
     const what = game.mode === 'daily' ? 'the Daily Voyage' : game.mode === 'h2h' ? `your duel vs ${game.opp.name}` : game.mode === 'tutorial' ? 'the practice voyage' : game.mode === 'test' ? `the ${shortDate(game.n)} test voyage` : 'practice';
     $('resumeTitle').textContent = 'Back to ' + what;
-    $('resumeSub').textContent = game.mode === 'h2h' ? `Round ${game.round + 1}` : game.mode === 'tutorial' ? 'Nothing counts' : `Spot ${game.round + 1} of ${spotsIn(game)}`;
+    $('resumeSub').textContent = game.mode === 'h2h' ? `${level().name} duel · round ${game.round + 1}` : game.mode === 'tutorial' ? 'Nothing counts' : `Spot ${game.round + 1} of ${spotsIn(game)}`;
   }
   $('friendBtn').hidden = !ONLINE;
   $('tutBtn').hidden = !welcome; $('skipBtn').hidden = !welcome;
@@ -2240,6 +2344,7 @@ $('practiceBtn').onclick = () => { closeMenu(); startPractice(); };
 $('h2hBtn').onclick = () => { closeMenu(); if (matchLive()) resumeMatch(); else openMatchmaking(); };
 $('friendBtn').onclick = () => { closeMenu(); openLobbyHost(); };
 $('matchGo').onclick = () => { if (pendingOpp) startMatch(pendingOpp); };
+$('matchFind').onclick = findSailor;
 $('matchCancel').onclick = cancelMatchmaking;
 $('lobbyGo').onclick = lobbyGo;
 $('lobbyCancel').onclick = closeLobby;
