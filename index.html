@@ -344,8 +344,22 @@ body.duel .brand { display: none; }
 .modeswitch button[aria-checked="true"] { background: var(--sun); color: var(--ink); }
 body.fixedview .tools { display: none; }
 /* 15-second lock-in timer */
-.timer { height: 8px; border-radius: 4px; background: rgba(214, 63, 51, .15); overflow: hidden; margin-bottom: -2px; }
-.timer i { display: block; height: 100%; width: 100%; background: var(--coral); border-radius: 4px; }
+.timer { height: 8px; border-radius: 4px; background: rgba(29, 106, 163, .15); overflow: hidden; margin-bottom: -2px; }
+.timer i { display: block; height: 100%; width: 100%; background: var(--sea); border-radius: 4px; }
+.timer.rushed { background: rgba(214, 63, 51, .15); }
+/* duel result chart */
+.hpchart { position: relative; display: grid; gap: 6px; }
+.hpc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.hpc-legend { display: flex; gap: 12px; font-size: 12.5px; font-weight: 800; color: var(--ink); }
+.hpc-legend span { display: inline-flex; align-items: center; gap: 5px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hpc-legend i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.hpchart svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.hpc-ax { font: 700 11px var(--body); fill: var(--ink-soft); }
+.hpc-lab { font: 900 12px var(--body); fill: var(--ink); }
+.hpc-tip { position: absolute; top: 22px; transform: translateX(-50%); background: var(--ink); color: var(--foam); font-size: 12px; font-weight: 800; padding: 5px 9px; border-radius: 8px; white-space: nowrap; pointer-events: none; }
+table.duel td:first-child { max-width: 0; width: 38%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+table.duel td.dmg { white-space: nowrap; }
+.timer.rushed i { background: var(--coral); }
 .primary.urgent { animation: urgent 1s ease-in-out infinite; }
 @keyframes urgent { 50% { filter: brightness(1.15); } }
 /* results */
@@ -470,7 +484,7 @@ td.won { color: var(--coral-deep); font-weight: 900; }
       <p class="tip"><b>Tip:</b> a straight line on a globe looks curved on a flat map. Trust the globe, not the map in your head.</p>
       <ul class="modes">
         <li><b>Daily voyage:</b> 10 spots, the same for everyone and the same rules. A new one every midnight, ranked worldwide.</li>
-        <li><b>Head to head:</b> a duel. Both start with 50,000 HP. Win a round and you hit the other sailor for the difference in km, times your multiplier: ×1.5 for your first win, ×2 for your second, ×2.5 after that. Once one sailor locks in, the other has 15 seconds.</li>
+        <li><b>Head to head:</b> a duel. Both start with 50,000 HP. Win a round and you hit the other sailor for the difference in km, times your multiplier. Every round you win raises it for next time: ×1, ×1.5, ×2, then ×2.5. Each round has a 60-second clock, and once one sailor locks in, the other has 15 seconds.</li>
         <li><b>Challenge a friend:</b> send a link and duel live.</li>
         <li><b>Practice:</b> random spots, no score. Switch to Explore to spin the globe, and try any spot again.</li>
       </ul>
@@ -558,6 +572,7 @@ td.won { color: var(--coral-deep); font-weight: 900; }
       <div class="total" id="finTotal">0 <small>/ 25,000</small></div>
       <div class="rank" id="finRank"></div></div>
     <canvas id="finMap" aria-label="World map of today's routes"></canvas>
+    <div class="hpchart" id="finChart" hidden></div>
     <table><thead id="finHead"><tr><th>Spot</th><th class="r">Grade</th><th class="r">You</th><th class="r">Best</th><th class="r">Pts</th></tr></thead><tbody id="finRows"></tbody></table>
     <div class="btnrow"><button class="ghost" id="copyBtn">Copy result</button><button class="primary" id="finPrimary">Practice</button></div>
     <textarea id="copyFallback" hidden readonly aria-label="Your result to copy"></textarea>
@@ -1236,7 +1251,7 @@ function arrive(fast) {
   setLook(false);
   showCard('aimCard'); $('sailBtn').disabled = true;
   $('locEyebrow').classList.remove('alert'); $('aimCard').classList.remove('sailing'); document.body.classList.remove('sailing');
-  $('locEyebrow').textContent = h2h ? `Round ${game.round + 1} · win it to hit ×${multFor(winsBy(game, 'you') + 1)}`
+  $('locEyebrow').textContent = h2h ? `Round ${game.round + 1} · your multiplier ×${multFor(winsBy(game, 'you'))}`
     : game.mode === 'tutorial' ? 'Practice voyage · nothing counts' : '';
   // every spot opens pointing north so the default heading carries no hint; a retry starts from the last heading
   setHeading(r.sails.length ? lastSail(r).h : 0);
@@ -1374,7 +1389,7 @@ function reveal(restored) {
   if (tut) note = (b.d >= s.best ? 'You found it! ' : '') + `The dashed green line is the longest voyage possible from here: ${fmt(s.best)} km to Papua New Guinea, more than halfway round the world. Every spot has one, and matching it scores 5,000 points. Try again, or carry on to pick a game.`;
   if (h2h) {
     const went = t => t.replace(/^Ran aground/, 'ran aground').replace(/^Sailed right/, 'sailed right');
-    note = `${o.name} ${went(landfallText(r.opp.hit).title)}.` + (!matchOver(game) ? ` Next win: you hit ×${multFor(winsBy(game, 'you') + 1)}, ${o.name} ×${multFor(winsBy(game, 'opp') + 1)}.` : '') + (miss ? ' ' + miss : '');
+    note = `${o.name} ${went(landfallText(r.opp.hit).title)}.` + (!matchOver(game) ? ` Multipliers now: you ×${multFor(winsBy(game, 'you'))}, ${o.name} ×${multFor(winsBy(game, 'opp'))}.` : '') + (miss ? ' ' + miss : '');
   }
   $('revNote').textContent = note;
   drawRose(b);
@@ -1473,11 +1488,12 @@ function endTutorial() { store.seen = true; store.tutDone = true; saveStore(); r
 
 // ================= duels (head to head) =================
 // Both sailors start with 50,000 HP. Each round the longer voyage hits the other sailor for the difference in km, times the
-// winner's multiplier. Multipliers are earned by winning rounds and kept: first win x1.5, second x2, every win after x2.5.
+// winner's multiplier. Each round you win raises your multiplier for the next win, and you keep it: x1, x1.5, x2, then x2.5.
+// Every round has a 60-second clock; once one sailor locks in, the other has 15 seconds (or what's left, if less).
 // Quick duels are against a sailor from the list below; friend duels are live against another player through Supabase.
-const HP0 = 50000, MAX_ROUNDS = 12, LOCK_MS = 15000;
-const WIN_MULTS = [1.5, 2, 2.5];
-const multFor = wins => WIN_MULTS[Math.min(Math.max(1, wins), WIN_MULTS.length) - 1];   // multiplier on your Nth round win
+const HP0 = 50000, MAX_ROUNDS = 12, LOCK_MS = 15000, ROUND_MS = 60000;
+const MULT_STEPS = [1, 1.5, 2, 2.5];
+const multFor = wins => MULT_STEPS[Math.min(Math.max(0, wins), MULT_STEPS.length - 1)];   // your multiplier after this many round wins
 const DUEL_TIERS = [0, 1, 2, 3, 4, 2, 3, 4, 3, 4, 4, 4];
 const newRound = () => ({ sails: [], banked: false, done: false, pts: 0 });
 const SAILORS = [['Aoife', 'IE'], ['Cian', 'IE'], ['Niamh', 'IE'], ['Oisín', 'IE'], ['Saoirse', 'IE'], ['Darragh', 'IE'], ['Ciara', 'IE'], ['Fionn', 'IE'],
@@ -1543,7 +1559,7 @@ function roundDamage(g, i) {
   const r = g.rounds[i]; if (!r || !r.done || !r.opp) return { to: null, amt: 0 };
   const a = Math.max(0, lastSail(r).d), b = Math.max(0, r.opp.d);
   if (a === b) return { to: null, amt: 0, mult: 1 };
-  const who = a > b ? 'you' : 'opp', mult = multFor(winsBy(g, who, i));
+  const who = a > b ? 'you' : 'opp', mult = multFor(winsBy(g, who, i - 1));   // earned by earlier wins, not this one
   return { to: who === 'you' ? 'opp' : 'you', amt: Math.round(Math.abs(a - b) * mult), mult };
 }
 // round wins so far (up to and including round i) by 'you' or 'opp'
@@ -1578,19 +1594,28 @@ function recordMatch(g) {
 // a duel saved by this version (older 5-spot matches are ignored)
 const matchLive = () => { const m = store.match; return !!(m && m.ver === DATA.ver && m.seed != null && m.opp && m.picks && m.picks.length === MAX_ROUNDS && m.picks.every(k => DATA.starts[k]) && m.rounds && m.rounds.length && !matchOver(m)); };
 
-// ---- lock-in: once the other sailor locks in, you have 15 seconds ----
+// ---- duel clock: 60 seconds a round; once the other sailor locks in, 15 seconds (or what's left) ----
 let lockTimer = null, botTimer = null, pollT = null;
+function startRoundClock() {
+  if (!game || game.phase !== 'aim') return;
+  const ms = window.MAGELLAN_TEST_ROUND_MS || ROUND_MS;
+  lockTimer = { end: performance.now() + ms, total: ms, rushed: false };
+  $('timerBar').hidden = false; $('timerBar').classList.remove('rushed');
+}
 function startLockTimer() {
-  if (lockTimer || !game || game.phase !== 'aim') return;
-  lockTimer = { end: performance.now() + (window.MAGELLAN_TEST_LOCK_MS || LOCK_MS) };
-  $('timerBar').hidden = false; showHint('');
+  if (!game || game.phase !== 'aim') return;
+  if (!lockTimer) startRoundClock();
+  if (lockTimer.rushed) return;
+  const ms = window.MAGELLAN_TEST_LOCK_MS || LOCK_MS, end = performance.now() + ms;
+  if (end < lockTimer.end) { lockTimer.end = end; lockTimer.total = ms; }
+  lockTimer.rushed = true; $('timerBar').classList.add('rushed'); showHint('');
   $('locEyebrow').textContent = `${game.opp.name} locked in!`; $('locEyebrow').classList.add('alert');
 }
-function clearLockTimer() { lockTimer = null; $('timerBar').hidden = true; $('sailBtn').classList.remove('urgent'); }
+function clearLockTimer() { lockTimer = null; $('timerBar').hidden = true; $('timerBar').classList.remove('rushed'); $('sailBtn').classList.remove('urgent'); }
 function tickLockTimer(now) {
   if (!lockTimer || !game || game.phase !== 'aim') return;
-  const total = window.MAGELLAN_TEST_LOCK_MS || LOCK_MS, left = Math.max(0, lockTimer.end - now);
-  $('timerFill').style.width = (100 * left / total) + '%';
+  const left = Math.max(0, lockTimer.end - now);
+  $('timerFill').style.width = (100 * left / lockTimer.total) + '%';
   const txt = `Set sail · ${Math.ceil(left / 1000)}`; if ($('sailBtn').textContent !== txt) $('sailBtn').textContent = txt;
   $('sailBtn').classList.toggle('urgent', left < 5000);
   if (left <= 0) setSail(true);
@@ -1599,6 +1624,7 @@ function stopDuelTimers() { clearTimeout(botTimer); clearTimeout(pollT); clearLo
 // aiming has started on a duel round
 function duelAim() {
   const g = game, r = roundObj(), i = g.round;
+  startRoundClock();
   if (g.kind === 'bot') {
     if (!r.opp) { r.opp = oppSail(cur.k, oppTarget(g.opp)); persist(); }
     clearTimeout(botTimer);
@@ -1689,7 +1715,7 @@ function openMatchmaking() {
   pendingOpp = null;
   const av = $('oppAvatar'); av.className = 'avatar searching'; av.textContent = '?';
   $('oppName').textContent = 'Searching'; $('matchTitle').textContent = 'Finding a sailor...';
-  $('matchNote').textContent = `Both start with ${fmt(HP0)} HP. The winner of each round hits for the difference in km, times ×1.5, then ×2, then ×2.5 as they win more rounds. Once one of you locks in, the other has 15 seconds.`;
+  $('matchNote').textContent = `Both start with ${fmt(HP0)} HP. The winner of each round hits for the difference in km, and each win raises your multiplier for next time (×1, ×1.5, ×2, ×2.5). 60 seconds a round; once one of you locks in, the other has 15.`;
   $('matchGo').hidden = true; $('matchBtns').style.gridTemplateColumns = '1fr'; $('matchCancel').focus();
   matchTimer = setTimeout(() => {
     pendingOpp = newOpponent();
@@ -1735,7 +1761,7 @@ function lobbyView(o) {
 function openLobbyHost() {
   resetModes(); closeSheets(); lobby = { role: 'host' };
   lobbyView({ title: 'Duel a friend, live', name: true, go: 'Create link',
-    note: `You'll get a link to send. The duel starts when your friend opens it. Both start with ${fmt(HP0)} HP; the winner of each round hits for the difference in km, times ×1.5, then ×2, then ×2.5 as they win more rounds.` });
+    note: `You'll get a link to send. The duel starts when your friend opens it. Both start with ${fmt(HP0)} HP; the winner of each round hits for the difference in km, and each win raises your multiplier for next time (×1, ×1.5, ×2, ×2.5).` });
   $('lobby').hidden = false; $('nameInput').focus();
 }
 async function lobbyGo() {
@@ -1812,7 +1838,7 @@ async function openLobbyGuest(code) {
   if (st.role === 'guest') return lobbyStarting(st);
   if (st.full) return lobbyError('This duel is full', 'Two sailors are already in it. Ask your friend for a new link.');
   lobbyView({ eyebrow: 'Duel', title: `${st.host_name} challenged you`, name: true, go: 'Join the duel',
-    note: `A live duel on the same spots. Both start with ${fmt(HP0)} HP; the winner of each round hits for the difference in km, times ×1.5, then ×2, then ×2.5 as they win more rounds. Once one of you locks in, the other has 15 seconds.` });
+    note: `A live duel on the same spots. Both start with ${fmt(HP0)} HP; the winner of each round hits for the difference in km, and each win raises your multiplier for next time (×1, ×1.5, ×2, ×2.5). 60 seconds a round; once one of you locks in, the other has 15.` });
   $('nameInput').focus();
 }
 async function joinDuel() {
@@ -1875,6 +1901,68 @@ function tickCountdown() {
   $('countdown').textContent = [Math.floor(s / 3600), Math.floor(s / 60) % 60, s % 60].map(v => String(v).padStart(2, '0')).join(':');
   if (game && game.mode === 'daily' && todayNum() !== game.n && !$('final').hidden) { clearInterval(cdTimer); $('finPrimary').textContent = 'Play the new voyage'; $('finPrimary').dataset.act = 'daily'; }
 }
+// ---- duel result: HP after each round, one line per sailor (on the light card; see the colour note at HP_COL) ----
+// gold and purple from the game's you/opponent colour families, checked for colour-blind separation on the card;
+// their contrast is low, so the lines carry direct labels and the round table below is the data view
+const HP_COL = { you: '#d6951a', opp: '#8a63dc' };
+function hpSeries(g) {
+  const ys = [HP0], os = [HP0]; let y = HP0, o = HP0;
+  g.rounds.forEach((r, i) => {
+    if (!r.done) return;
+    const d = roundDamage(g, i);
+    if (d.to === 'you') y = Math.max(0, y - d.amt); else if (d.to === 'opp') o = Math.max(0, o - d.amt);
+    ys.push(y); os.push(o);
+  });
+  return [ys, os];
+}
+function drawHpChart(g) {
+  const box = $('finChart'); box.innerHTML = '';
+  const [ys, os] = hpSeries(g), n = ys.length - 1, oname = g.opp.name;
+  const head = document.createElement('div'); head.className = 'hpc-head';
+  const ttl = document.createElement('span'); ttl.className = 'eyebrow'; ttl.textContent = 'HP after each round';
+  const lg = document.createElement('span'); lg.className = 'hpc-legend';
+  for (const [nm, col] of [['You', HP_COL.you], [oname, HP_COL.opp]]) { const it = document.createElement('span'); const dot = document.createElement('i'); dot.style.background = col; it.append(dot, nm); lg.append(it); }
+  head.append(ttl, lg); box.append(head);
+  const W = Math.max(260, box.clientWidth || 340), H = 168, L = 34, R = 92, T = 12, B = 22;
+  const x = i => L + (W - L - R) * (n ? i / n : 0), yv = v => T + (H - T - B) * (1 - v / HP0);
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  const el = (tag, at, parent = svg) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); parent.appendChild(e); return e; };
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', `HP after each round. You finished on ${fmt(ys[n])}, ${oname} on ${fmt(os[n])}.`);
+  // recessive grid: full, half, empty
+  for (const v of [HP0, HP0 / 2, 0]) {
+    el('line', { x1: L, x2: W - R + 6, y1: yv(v), y2: yv(v), stroke: v ? 'rgba(11,42,66,.1)' : 'rgba(11,42,66,.28)', 'stroke-width': 1 });
+    const t = el('text', { x: L - 6, y: yv(v) + 4, 'text-anchor': 'end', class: 'hpc-ax' }); t.textContent = v ? fmt(v / 1000) + 'k' : '0';
+  }
+  for (let i = 1; i <= n; i++) { const t = el('text', { x: x(i), y: H - 5, 'text-anchor': 'middle', class: 'hpc-ax' }); t.textContent = i; }
+  // lines then markers, you on top
+  for (const [vals, col] of [[os, HP_COL.opp], [ys, HP_COL.you]]) {
+    el('polyline', { points: vals.map((v, i) => `${x(i)},${yv(v)}`).join(' '), fill: 'none', stroke: col, 'stroke-width': 2.5, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+    vals.forEach((v, i) => el('circle', { cx: x(i), cy: yv(v), r: 4, fill: col, stroke: '#eef6fb', 'stroke-width': 2 }));
+  }
+  // direct labels at the end, nudged apart if they would collide
+  let ly = [yv(ys[n]), yv(os[n])];
+  if (Math.abs(ly[0] - ly[1]) < 15) { const mid = (ly[0] + ly[1]) / 2, up = ys[n] >= os[n]; ly = up ? [mid - 8, mid + 8] : [mid + 8, mid - 8]; }
+  const short = s => (s.length > 9 ? s.slice(0, 8) + '…' : s);
+  [['You', ys[n]], [short(oname), os[n]]].forEach(([nm, v], k) => {
+    const t = el('text', { x: x(n) + 9, y: ly[k] + 4, class: 'hpc-lab' }); t.textContent = `${nm} ${v ? fmt(v) : 'KO'}`;
+  });
+  // hover / touch: a guide line and the values for the nearest round
+  const guide = el('line', { y1: T, y2: H - B, stroke: 'rgba(11,42,66,.35)', 'stroke-width': 1, visibility: 'hidden' });
+  const tip = document.createElement('div'); tip.className = 'hpc-tip'; tip.hidden = true;
+  const hit = el('rect', { x: L - 8, y: 0, width: W - L - R + 16, height: H, fill: 'transparent' });
+  const show = e => {
+    const r = svg.getBoundingClientRect(), px = (e.clientX - r.left) * W / r.width;
+    const i = Math.max(0, Math.min(n, Math.round((px - L) / ((W - L - R) / Math.max(1, n)))));
+    guide.setAttribute('x1', x(i)); guide.setAttribute('x2', x(i)); guide.setAttribute('visibility', 'visible');
+    tip.textContent = `${i ? 'After round ' + i : 'Start'} · You ${fmt(ys[i])} · ${oname} ${fmt(os[i])}`;
+    tip.hidden = false; tip.style.left = Math.min(Math.max(x(i) * r.width / W, 90), r.width - 90) + 'px';
+  };
+  hit.addEventListener('pointermove', show); hit.addEventListener('pointerdown', show);
+  hit.addEventListener('pointerleave', () => { guide.setAttribute('visibility', 'hidden'); tip.hidden = true; });
+  box.append(svg, tip);
+}
 function showMatchFinal() {
   const g = game, o = g.opp, out = g.outcome || matchOutcome(g), [y, oh] = hpOf(g), n = roundsDone(g), friend = g.kind === 'friend';
   $('finEyebrow').textContent = `${friend ? 'Friend duel' : 'Duel'} vs ${o.name}${o.cc ? ' ' + flag(o.cc) : ''}`;
@@ -1889,7 +1977,7 @@ function showMatchFinal() {
   const hr = document.createElement('tr');
   for (const [t, cls] of [['Round', ''], ['You', 'r'], [o.name, 'r'], ['Damage', 'r']]) { const th = document.createElement('th'); th.textContent = t; if (cls) th.className = cls; hr.append(th); }
   $('finHead').append(hr);
-  const tb = $('finRows'); tb.innerHTML = '';
+  const tb = $('finRows'); tb.innerHTML = ''; $('finRows').closest('table').classList.add('duel');
   g.rounds.forEach((r, i) => {
     if (!r.done) return;
     const s = DATA.starts[g.picks[i]], dm = roundDamage(g, i);
@@ -1898,7 +1986,7 @@ function showMatchFinal() {
     const first = document.createElement('td'); const num = document.createElement('span'); num.className = 'num'; num.textContent = i + 1;
     first.append(num, document.createTextNode(spotShort(s)));
     tr.append(first, td(fmt(Math.max(0, lastSail(r).d)), 'r' + (dm.to === 'opp' ? ' won' : '')), td(fmt(Math.max(0, r.opp ? r.opp.d : 0)), 'r' + (dm.to === 'you' ? ' won' : '')),
-      td(dm.to ? `${dm.to === 'you' ? 'You' : o.name} −${fmt(dm.amt)}` : '-', 'r'));
+      td(dm.to ? `${dm.to === 'you' ? 'You' : o.name} −${fmt(dm.amt)}` : '-', 'r dmg'));
     tb.appendChild(tr);
   });
   const h = store.h2h || { w: 0, l: 0, d: 0 }, played = h.w + h.l + h.d;
@@ -1913,14 +2001,14 @@ function showMatchFinal() {
   $('copyFallback').hidden = true; $('copyBtn').textContent = 'Copy result';
   $('final').hidden = false; $('menu').hidden = true;
   showCard(null);
-  drawFinalMap();
+  $('finMap').hidden = true; $('finChart').hidden = false; drawHpChart(g);
   clearInterval(cdTimer);
   stopFly(false); fly(view.lat, view.lon, R_.world(), 800);
 }
 const FIN_HEAD = '<tr><th>Spot</th><th class="r">Grade</th><th class="r">You</th><th class="r">Best</th><th class="r">Pts</th></tr>';
 function showFinal() {
   if (game.mode === 'h2h') return showMatchFinal();
-  $('finHead').innerHTML = FIN_HEAD; $('statsTitle').textContent = 'Your stats'; $('hist').hidden = false; $('finTotal').classList.remove('word'); $('finPrimary').disabled = false;
+  $('finHead').innerHTML = FIN_HEAD; $('finRows').closest('table').classList.remove('duel'); $('finMap').hidden = false; $('finChart').hidden = true; $('statsTitle').textContent = 'Your stats'; $('hist').hidden = false; $('finTotal').classList.remove('word'); $('finPrimary').disabled = false;
   const g = game; const daily = g.mode === 'daily';
   const total = g.rounds.reduce((a, r) => a + r.pts, 0);
   $('finEyebrow').textContent = daily ? `Voyage #${g.n} complete` : g.mode === 'test' ? `Test run of voyage #${g.n} complete` : 'Practice voyage complete';
