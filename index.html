@@ -399,8 +399,8 @@ td.won { color: var(--coral-deep); font-weight: 900; }
     <div class="chip" id="roundChip"><small id="roundLab">SPOT</small><b id="roundNum">1/10</b></div>
     <div class="chip" id="scoreChip"><small id="scoreLab">SCORE</small><b id="scoreNum">0</b></div>
     <div class="hp" id="hpBox" hidden>
-      <div class="hprow"><span class="who">You</span><span class="hpt"><i id="hpYou"></i></span><b id="hpYouNum">20,000</b></div>
-      <div class="hprow opp"><span class="who" id="hpOppName">Them</span><span class="hpt"><i id="hpOpp"></i></span><b id="hpOppNum">20,000</b></div>
+      <div class="hprow"><span class="who">You</span><span class="hpt"><i id="hpYou"></i></span><b id="hpYouNum">50,000</b></div>
+      <div class="hprow opp"><span class="who" id="hpOppName">Them</span><span class="hpt"><i id="hpOpp"></i></span><b id="hpOppNum">50,000</b></div>
     </div>
     <button class="iconbtn" id="helpBtn" aria-label="Home" title="Home"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11.5L12 4l8.5 7.5M6.5 9.5V20h11V9.5"/></svg></button>
   </header>
@@ -470,7 +470,7 @@ td.won { color: var(--coral-deep); font-weight: 900; }
       <p class="tip"><b>Tip:</b> a straight line on a globe looks curved on a flat map. Trust the globe, not the map in your head.</p>
       <ul class="modes">
         <li><b>Daily voyage:</b> 10 spots, the same for everyone and the same rules. A new one every midnight, ranked worldwide.</li>
-        <li><b>Head to head:</b> a duel. Both start with 20,000 HP; each round the shorter voyage loses the difference in km. Once one sailor locks in, the other has 15 seconds.</li>
+        <li><b>Head to head:</b> a duel, like GeoGuessr. Both start with 50,000 HP. Each round the shorter voyage loses the difference in km, times a multiplier that rises from ×1.5 to ×2.5. Once one sailor locks in, the other has 15 seconds.</li>
         <li><b>Challenge a friend:</b> send a link and duel live.</li>
         <li><b>Practice:</b> random spots, no score. Switch to Explore to spin the globe, and try any spot again.</li>
       </ul>
@@ -480,7 +480,7 @@ td.won { color: var(--coral-deep); font-weight: 900; }
       <div class="titlerow"><svg class="headicon" width="50" height="50" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"> <defs><clipPath id="hct"><circle cx="60" cy="60" r="58"/></clipPath></defs> <circle cx="60" cy="60" r="58" fill="#1d6aa3"/> <g clip-path="url(#hct)"> <path d="M0 86 Q30 80 60 86 T120 86 V120 H0 Z" fill="#0d3f66"/> <path d="M14 120 Q20 96 44 92 L76 92 Q100 96 106 120 Z" fill="#1b1b22" stroke="#0b2a42" stroke-width="3"/> <g stroke="#0b2a42" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"> <ellipse cx="32.5" cy="62" rx="5.5" ry="8" fill="#e2a87c"/> <ellipse cx="87.5" cy="62" rx="5.5" ry="8" fill="#e2a87c"/> <path d="M35 52 Q35 32 60 32 Q85 32 85 52 L85 68 Q85 80 60 82 Q35 80 35 68 Z" fill="#efbf93"/> <path d="M32 60 Q34 72 43 72 Q50 78 60 77 Q70 78 77 72 Q86 72 88 60 Q97 90 84 108 Q74 121 60 121 Q46 121 36 108 Q23 90 32 60 Z" fill="#4b3e36"/> <path d="M44 72 Q52 64 60 68.5 Q68 64 76 72 Q68 75.5 60 72.5 Q52 75.5 44 72 Z" fill="#3a2f29"/> </g> <g fill="none" stroke-linecap="round"> <path d="M44 86 q3 5 0 10 M54 90 q3 5 0 10 M66 90 q3 5 0 10 M76 85 q3 5 0 10 M38 76 q2 4 0 8 M82 76 q2 4 0 8" stroke="#7d6a5d" stroke-width="2.2"/> <path d="M49 98 q3 5 0 10 M61 101 q3 5 0 9 M71 98 q3 5 0 9" stroke="#8f7f72" stroke-width="2"/> </g> <ellipse cx="60" cy="78.5" rx="4.4" ry="2.5" fill="#c4574a" stroke="#0b2a42" stroke-width="1.8"/> <path d="M58.5 51 Q53.5 62 55 64.5 Q60 67.5 65.5 64.5" fill="#e0a37b" stroke="#0b2a42" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/> <g stroke="#0b2a42" stroke-width="2.2"><ellipse cx="48.5" cy="53" rx="5.2" ry="4.4" fill="#fff"/><ellipse cx="71.5" cy="53" rx="5.2" ry="4.4" fill="#fff"/></g> <circle cx="50.5" cy="53.5" r="2.6" fill="#3b2516"/><circle cx="73.5" cy="53.5" r="2.6" fill="#3b2516"/> <circle cx="51.4" cy="52.5" r=".9" fill="#fff"/><circle cx="74.4" cy="52.5" r=".9" fill="#fff"/> <path d="M40 45.5 Q46 42 55.5 47" fill="none" stroke="#2a201a" stroke-width="4.6" stroke-linecap="round"/> <path d="M64.5 47 Q74 42 80 45.5" fill="none" stroke="#2a201a" stroke-width="4.6" stroke-linecap="round"/> <path d="M57 41 Q60 43 63 41" fill="none" stroke="#c98f66" stroke-width="1.6" stroke-linecap="round"/> <g stroke="#0b2a42" stroke-width="3" stroke-linejoin="round"> <path d="M24 38 Q18 10 60 9 Q102 10 96 38 Q80 30 60 30 Q40 30 24 38 Z" fill="#7e2531"/> <path d="M21 37 Q60 21 99 37 Q102 45 96 47 Q60 33 24 47 Q18 45 21 37 Z" fill="#5c1a24"/> </g> <path d="M36 19 Q48 13 62 13" fill="none" stroke="#a94456" stroke-width="3.2" stroke-linecap="round"/> <path d="M30 41 Q60 30 90 41" fill="none" stroke="#7e2e3b" stroke-width="2" stroke-linecap="round"/> </g> <circle cx="60" cy="60" r="58" fill="none" stroke="#0b2a42" stroke-width="3"/> </svg><div><h1 class="hometitle">Magellan</h1><span class="eyebrow" id="todayDate"></span></div></div>
       <button type="button" class="modecard resume" id="resumeCard" hidden><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg></span><b id="resumeTitle">Back to your game</b><span class="mc-sub" id="resumeSub"></span><span class="mc-go" aria-hidden="true">›</span></button>
       <button type="button" class="modecard daily" id="playBtn"><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z" fill="currentColor"/></svg></span><b>Daily voyage <span id="todayNum">#1</span></b><span class="mc-sub">Same 10 spots for everyone. Ranked worldwide.</span><span class="mc-status" id="dailyStatus"></span><span class="mc-go" aria-hidden="true">›</span></button>
-      <button type="button" class="modecard duel" id="h2hBtn"><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l10 10M20 4L10 14M6.5 16.5L4 19M17.5 16.5L20 19M5 13l6 6M19 13l-6 6"/></svg></span><b>Head to head</b><span class="mc-sub">Duel another sailor. 20,000 HP each.</span><span class="mc-status" id="duelStatus"></span><span class="mc-go" aria-hidden="true">›</span></button>
+      <button type="button" class="modecard duel" id="h2hBtn"><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l10 10M20 4L10 14M6.5 16.5L4 19M17.5 16.5L20 19M5 13l6 6M19 13l-6 6"/></svg></span><b>Head to head</b><span class="mc-sub">Duel another sailor. 50,000 HP each.</span><span class="mc-status" id="duelStatus"></span><span class="mc-go" aria-hidden="true">›</span></button>
       <button type="button" class="modecard friend" id="friendBtn" hidden><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="16.5" cy="9" r="3"/><path d="M2.5 19c.8-3 3-4.5 5.5-4.5s4.7 1.5 5.5 4.5M12 17c.9-1.7 2.5-2.5 4.5-2.5 2.4 0 4.2 1.5 5 4.5"/></svg></span><b>Challenge a friend</b><span class="mc-sub">Send a link, duel live.</span><span class="mc-go" aria-hidden="true">›</span></button>
       <button type="button" class="modecard practice" id="practiceBtn"><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg></span><b>Practice</b><span class="mc-sub">No score. Explore the globe, retry any spot.</span><span class="mc-go" aria-hidden="true">›</span></button>
       <p class="note" id="todayStreak"></p>
@@ -1236,7 +1236,7 @@ function arrive(fast) {
   setLook(false);
   showCard('aimCard'); $('sailBtn').disabled = true;
   $('locEyebrow').classList.remove('alert'); $('aimCard').classList.remove('sailing'); document.body.classList.remove('sailing');
-  $('locEyebrow').textContent = h2h ? (roundMult(game.round) > 1 ? `Damage ×${roundMult(game.round)} this round` : '')
+  $('locEyebrow').textContent = h2h ? `Round ${game.round + 1} · damage ×${roundMult(game.round)}`
     : game.mode === 'tutorial' ? 'Practice voyage · nothing counts' : '';
   // every spot opens pointing north so the default heading carries no hint; a retry starts from the last heading
   setHeading(r.sails.length ? lastSail(r).h : 0);
@@ -1340,14 +1340,14 @@ function reveal(restored) {
   game.phase = 'reveal'; showHint(''); setLook(false); clearLockTimer();
   persist(); updateHud();
   const lf = landfallText(b.hit);
-  $('revEyebrow').textContent = h2h && roundMult(game.round) > 1 ? `${spotShort(s)} · damage ×${roundMult(game.round)}` : spotShort(s);
+  $('revEyebrow').textContent = h2h ? `Round ${game.round + 1} · ${spotShort(s)}` : spotShort(s);
   $('barOppRow').hidden = !h2h; $('bars').classList.toggle('h2h', h2h);
   const od = h2h && r.opp ? Math.max(0, r.opp.d) : 0;
   const pct = Math.round(100 * Math.max(0, b.d) / s.best);
   if (h2h) {
     const dm = roundDamage(game, game.round);
     $('revTitle').textContent = dm.to === 'opp' ? `${o.name} takes ${fmt(dm.amt)} damage` : dm.to === 'you' ? `You take ${fmt(dm.amt)} damage` : 'Dead heat: no damage';
-    $('revSub').textContent = `You ${fmt(b.d)} km · ${o.name} ${fmt(od)} km\n${lf.line}`;
+    $('revSub').textContent = `You ${fmt(b.d)} km · ${o.name} ${fmt(od)} km\n${dm.amt ? `${fmt(Math.abs(Math.max(0, b.d) - od))} km × ${roundMult(game.round)} damage` : lf.line}`;
     $('revPts').textContent = dm.amt ? '−' + fmt(dm.amt) : '0';
     $('revPtsLab').textContent = dm.to === 'you' ? 'your HP' : dm.to === 'opp' ? 'their HP' : 'damage';
     $('barOppLab').textContent = o.name; $('barOppTxt').textContent = `${fmt(od)} km`;
@@ -1472,10 +1472,11 @@ function startTutorial() {
 function endTutorial() { store.seen = true; store.tutDone = true; saveStore(); resetModes(); game = null; cur = null; showCard(null); showHint(''); updateHud(); openMenu('today'); }
 
 // ================= duels (head to head) =================
-// Both sailors start with 20,000 HP. Each round the shorter voyage loses the difference in km, multiplied from round 5 on.
+// Both sailors start with 50,000 HP. Each round the shorter voyage loses the difference in km times the round's multiplier,
+// which rises from x1.5 in round 1 to x2.5 from round 5 (GeoGuessr-style: by round, whoever loses it).
 // Quick duels are against a sailor from the list below; friend duels are live against another player through Supabase.
-const HP0 = 20000, MAX_ROUNDS = 12, LOCK_MS = 15000;
-const MULTS = [1, 1, 1, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8];
+const HP0 = 50000, MAX_ROUNDS = 12, LOCK_MS = 15000;
+const MULTS = [1.5, 1.75, 2, 2.25, 2.5];
 const roundMult = i => MULTS[Math.min(Math.max(0, i), MULTS.length - 1)];
 const DUEL_TIERS = [0, 1, 2, 3, 4, 2, 3, 4, 3, 4, 4, 4];
 const newRound = () => ({ sails: [], banked: false, done: false, pts: 0 });
@@ -1677,7 +1678,7 @@ function openMatchmaking() {
   pendingOpp = null;
   const av = $('oppAvatar'); av.className = 'avatar searching'; av.textContent = '?';
   $('oppName').textContent = 'Searching'; $('matchTitle').textContent = 'Finding a sailor...';
-  $('matchNote').textContent = `Both start with ${fmt(HP0)} HP. Each round the shorter voyage loses the difference in km. Once one of you locks in, the other has 15 seconds.`;
+  $('matchNote').textContent = `Both start with ${fmt(HP0)} HP. Each round the shorter voyage loses the difference in km, times ×1.5 rising to ×2.5. Once one of you locks in, the other has 15 seconds.`;
   $('matchGo').hidden = true; $('matchBtns').style.gridTemplateColumns = '1fr'; $('matchCancel').focus();
   matchTimer = setTimeout(() => {
     pendingOpp = newOpponent();
@@ -1723,7 +1724,7 @@ function lobbyView(o) {
 function openLobbyHost() {
   resetModes(); closeSheets(); lobby = { role: 'host' };
   lobbyView({ title: 'Duel a friend, live', name: true, go: 'Create link',
-    note: `You'll get a link to send. The duel starts when your friend opens it. Both start with ${fmt(HP0)} HP; each round the shorter voyage loses the difference in km.` });
+    note: `You'll get a link to send. The duel starts when your friend opens it. Both start with ${fmt(HP0)} HP; each round the shorter voyage loses the difference in km, times ×1.5 rising to ×2.5.` });
   $('lobby').hidden = false; $('nameInput').focus();
 }
 async function lobbyGo() {
@@ -1800,7 +1801,7 @@ async function openLobbyGuest(code) {
   if (st.role === 'guest') return lobbyStarting(st);
   if (st.full) return lobbyError('This duel is full', 'Two sailors are already in it. Ask your friend for a new link.');
   lobbyView({ eyebrow: 'Duel', title: `${st.host_name} challenged you`, name: true, go: 'Join the duel',
-    note: `A live duel on the same spots. Both start with ${fmt(HP0)} HP; each round the shorter voyage loses the difference in km. Once one of you locks in, the other has 15 seconds.` });
+    note: `A live duel on the same spots. Both start with ${fmt(HP0)} HP; each round the shorter voyage loses the difference in km, times ×1.5 rising to ×2.5. Once one of you locks in, the other has 15 seconds.` });
   $('nameInput').focus();
 }
 async function joinDuel() {
