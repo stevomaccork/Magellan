@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs><clipPath id="c"><circle cx="60" cy="60" r="58"/></clipPath></defs>
+  <circle cx="60" cy="60" r="58" fill="#1d6aa3"/>
+  <g clip-path="url(#c)">
+    <path d="M0 86 Q30 80 60 86 T120 86 V120 H0 Z" fill="#0d3f66"/>
+    <!-- dark robe -->
+    <path d="M14 120 Q20 96 44 92 L76 92 Q100 96 106 120 Z" fill="#1b1b22" stroke="#0b2a42" stroke-width="3"/>
+    <g stroke="#0b2a42" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+      <ellipse cx="32.5" cy="62" rx="5.5" ry="8" fill="#e2a87c"/>
+      <ellipse cx="87.5" cy="62" rx="5.5" ry="8" fill="#e2a87c"/>
+      <path d="M35 52 Q35 32 60 32 Q85 32 85 52 L85 68 Q85 80 60 82 Q35 80 35 68 Z" fill="#efbf93"/>
+      <!-- big beard -->
+      <path d="M32 60 Q34 72 43 72 Q50 78 60 77 Q70 78 77 72 Q86 72 88 60 Q97 90 84 108 Q74 121 60 121 Q46 121 36 108 Q23 90 32 60 Z" fill="#4b3e36"/>
+      <path d="M44 72 Q52 64 60 68.5 Q68 64 76 72 Q68 75.5 60 72.5 Q52 75.5 44 72 Z" fill="#3a2f29"/>
+    </g>
+    <g fill="none" stroke-linecap="round">
+      <path d="M44 86 q3 5 0 10 M54 90 q3 5 0 10 M66 90 q3 5 0 10 M76 85 q3 5 0 10 M38 76 q2 4 0 8 M82 76 q2 4 0 8" stroke="#7d6a5d" stroke-width="2.2"/>
+      <path d="M49 98 q3 5 0 10 M61 101 q3 5 0 9 M71 98 q3 5 0 9" stroke="#8f7f72" stroke-width="2"/>
+    </g>
+    <ellipse cx="60" cy="78.5" rx="4.4" ry="2.5" fill="#c4574a" stroke="#0b2a42" stroke-width="1.8"/>
+    <!-- nose -->
+    <path d="M58.5 51 Q53.5 62 55 64.5 Q60 67.5 65.5 64.5" fill="#e0a37b" stroke="#0b2a42" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- eyes, glancing sideways -->
+    <g stroke="#0b2a42" stroke-width="2.2"><ellipse cx="48.5" cy="53" rx="5.2" ry="4.4" fill="#fff"/><ellipse cx="71.5" cy="53" rx="5.2" ry="4.4" fill="#fff"/></g>
+    <circle cx="50.5" cy="53.5" r="2.6" fill="#3b2516"/><circle cx="73.5" cy="53.5" r="2.6" fill="#3b2516"/>
+    <circle cx="51.4" cy="52.5" r=".9" fill="#fff"/><circle cx="74.4" cy="52.5" r=".9" fill="#fff"/>
+    <!-- stern, heavy brows -->
+    <path d="M40 45.5 Q46 42 55.5 47" fill="none" stroke="#2a201a" stroke-width="4.6" stroke-linecap="round"/>
+    <path d="M64.5 47 Q74 42 80 45.5" fill="none" stroke="#2a201a" stroke-width="4.6" stroke-linecap="round"/>
+    <path d="M57 41 Q60 43 63 41" fill="none" stroke="#c98f66" stroke-width="1.6" stroke-linecap="round"/>
+    <!-- wide, puffy velvet cap with a rolled band -->
+    <g stroke="#0b2a42" stroke-width="3" stroke-linejoin="round">
+      <path d="M24 38 Q18 10 60 9 Q102 10 96 38 Q80 30 60 30 Q40 30 24 38 Z" fill="#7e2531"/>
+      <path d="M21 37 Q60 21 99 37 Q102 45 96 47 Q60 33 24 47 Q18 45 21 37 Z" fill="#5c1a24"/>
+    </g>
+    <path d="M36 19 Q48 13 62 13" fill="none" stroke="#a94456" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M30 41 Q60 30 90 41" fill="none" stroke="#7e2e3b" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <circle cx="60" cy="60" r="58" fill="none" stroke="#0b2a42" stroke-width="3"/>
+</svg>
