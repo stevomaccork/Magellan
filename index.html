@@ -470,7 +470,7 @@ td.won { color: var(--coral-deep); font-weight: 900; }
       <p class="tip"><b>Tip:</b> a straight line on a globe looks curved on a flat map. Trust the globe, not the map in your head.</p>
       <ul class="modes">
         <li><b>Daily voyage:</b> 10 spots, the same for everyone and the same rules. A new one every midnight, ranked worldwide.</li>
-        <li><b>Head to head:</b> a duel, like GeoGuessr. Both start with 50,000 HP. Each round the shorter voyage loses the difference in km, times a multiplier that rises from ×1.5 to ×2.5. Once one sailor locks in, the other has 15 seconds.</li>
+        <li><b>Head to head:</b> a duel. Both start with 50,000 HP. Win a round and you hit the other sailor for the difference in km, times your multiplier: ×1.5 for your first win, ×2 for your second, ×2.5 after that. Once one sailor locks in, the other has 15 seconds.</li>
         <li><b>Challenge a friend:</b> send a link and duel live.</li>
         <li><b>Practice:</b> random spots, no score. Switch to Explore to spin the globe, and try any spot again.</li>
       </ul>
@@ -1236,7 +1236,7 @@ function arrive(fast) {
   setLook(false);
   showCard('aimCard'); $('sailBtn').disabled = true;
   $('locEyebrow').classList.remove('alert'); $('aimCard').classList.remove('sailing'); document.body.classList.remove('sailing');
-  $('locEyebrow').textContent = h2h ? `Round ${game.round + 1} · damage ×${roundMult(game.round)}`
+  $('locEyebrow').textContent = h2h ? `Round ${game.round + 1} · win it to hit ×${multFor(winsBy(game, 'you') + 1)}`
     : game.mode === 'tutorial' ? 'Practice voyage · nothing counts' : '';
   // every spot opens pointing north so the default heading carries no hint; a retry starts from the last heading
   setHeading(r.sails.length ? lastSail(r).h : 0);
@@ -1347,7 +1347,7 @@ function reveal(restored) {
   if (h2h) {
     const dm = roundDamage(game, game.round);
     $('revTitle').textContent = dm.to === 'opp' ? `${o.name} takes ${fmt(dm.amt)} damage` : dm.to === 'you' ? `You take ${fmt(dm.amt)} damage` : 'Dead heat: no damage';
-    $('revSub').textContent = `You ${fmt(b.d)} km · ${o.name} ${fmt(od)} km\n${dm.amt ? `${fmt(Math.abs(Math.max(0, b.d) - od))} km × ${roundMult(game.round)} damage` : lf.line}`;
+    $('revSub').textContent = `You ${fmt(b.d)} km · ${o.name} ${fmt(od)} km\n${dm.amt ? `${fmt(Math.abs(Math.max(0, b.d) - od))} km × ${dm.mult} damage` : lf.line}`;
     $('revPts').textContent = dm.amt ? '−' + fmt(dm.amt) : '0';
     $('revPtsLab').textContent = dm.to === 'you' ? 'your HP' : dm.to === 'opp' ? 'their HP' : 'damage';
     $('barOppLab').textContent = o.name; $('barOppTxt').textContent = `${fmt(od)} km`;
@@ -1374,7 +1374,7 @@ function reveal(restored) {
   if (tut) note = (b.d >= s.best ? 'You found it! ' : '') + `The dashed green line is the longest voyage possible from here: ${fmt(s.best)} km to Papua New Guinea, more than halfway round the world. Every spot has one, and matching it scores 5,000 points. Try again, or carry on to pick a game.`;
   if (h2h) {
     const went = t => t.replace(/^Ran aground/, 'ran aground').replace(/^Sailed right/, 'sailed right');
-    note = `${o.name} ${went(landfallText(r.opp.hit).title)}.` + (roundMult(game.round + 1) > roundMult(game.round) && !matchOver(game) ? ` Next round, damage ×${roundMult(game.round + 1)}.` : '') + (miss ? ' ' + miss : '');
+    note = `${o.name} ${went(landfallText(r.opp.hit).title)}.` + (!matchOver(game) ? ` Next win: you hit ×${multFor(winsBy(game, 'you') + 1)}, ${o.name} ×${multFor(winsBy(game, 'opp') + 1)}.` : '') + (miss ? ' ' + miss : '');
   }
   $('revNote').textContent = note;
   drawRose(b);
@@ -1472,12 +1472,12 @@ function startTutorial() {
 function endTutorial() { store.seen = true; store.tutDone = true; saveStore(); resetModes(); game = null; cur = null; showCard(null); showHint(''); updateHud(); openMenu('today'); }
 
 // ================= duels (head to head) =================
-// Both sailors start with 50,000 HP. Each round the shorter voyage loses the difference in km times the round's multiplier,
-// which rises from x1.5 in round 1 to x2.5 from round 5 (GeoGuessr-style: by round, whoever loses it).
+// Both sailors start with 50,000 HP. Each round the longer voyage hits the other sailor for the difference in km, times the
+// winner's multiplier. Multipliers are earned by winning rounds and kept: first win x1.5, second x2, every win after x2.5.
 // Quick duels are against a sailor from the list below; friend duels are live against another player through Supabase.
 const HP0 = 50000, MAX_ROUNDS = 12, LOCK_MS = 15000;
-const MULTS = [1.5, 1.75, 2, 2.25, 2.5];
-const roundMult = i => MULTS[Math.min(Math.max(0, i), MULTS.length - 1)];
+const WIN_MULTS = [1.5, 2, 2.5];
+const multFor = wins => WIN_MULTS[Math.min(Math.max(1, wins), WIN_MULTS.length) - 1];   // multiplier on your Nth round win
 const DUEL_TIERS = [0, 1, 2, 3, 4, 2, 3, 4, 3, 4, 4, 4];
 const newRound = () => ({ sails: [], banked: false, done: false, pts: 0 });
 const SAILORS = [['Aoife', 'IE'], ['Cian', 'IE'], ['Niamh', 'IE'], ['Oisín', 'IE'], ['Saoirse', 'IE'], ['Darragh', 'IE'], ['Ciara', 'IE'], ['Fionn', 'IE'],
@@ -1542,8 +1542,19 @@ function oppSail(k, target) {
 function roundDamage(g, i) {
   const r = g.rounds[i]; if (!r || !r.done || !r.opp) return { to: null, amt: 0 };
   const a = Math.max(0, lastSail(r).d), b = Math.max(0, r.opp.d);
-  if (a === b) return { to: null, amt: 0 };
-  return { to: a < b ? 'you' : 'opp', amt: Math.round(Math.abs(a - b) * roundMult(i)) };
+  if (a === b) return { to: null, amt: 0, mult: 1 };
+  const who = a > b ? 'you' : 'opp', mult = multFor(winsBy(g, who, i));
+  return { to: who === 'you' ? 'opp' : 'you', amt: Math.round(Math.abs(a - b) * mult), mult };
+}
+// round wins so far (up to and including round i) by 'you' or 'opp'
+function winsBy(g, who, i = g.rounds.length - 1) {
+  let n = 0;
+  for (let k = 0; k <= i; k++) {
+    const r = g.rounds[k]; if (!r || !r.done || !r.opp) continue;
+    const a = Math.max(0, lastSail(r).d), b = Math.max(0, r.opp.d);
+    if (who === 'you' ? a > b : b > a) n++;
+  }
+  return n;
 }
 function hpOf(g) {
   let y = HP0, o = HP0;
@@ -1678,7 +1689,7 @@ function openMatchmaking() {
   pendingOpp = null;
   const av = $('oppAvatar'); av.className = 'avatar searching'; av.textContent = '?';
   $('oppName').textContent = 'Searching'; $('matchTitle').textContent = 'Finding a sailor...';
-  $('matchNote').textContent = `Both start with ${fmt(HP0)} HP. Each round the shorter voyage loses the difference in km, times ×1.5 rising to ×2.5. Once one of you locks in, the other has 15 seconds.`;
+  $('matchNote').textContent = `Both start with ${fmt(HP0)} HP. The winner of each round hits for the difference in km, times ×1.5, then ×2, then ×2.5 as they win more rounds. Once one of you locks in, the other has 15 seconds.`;
   $('matchGo').hidden = true; $('matchBtns').style.gridTemplateColumns = '1fr'; $('matchCancel').focus();
   matchTimer = setTimeout(() => {
     pendingOpp = newOpponent();
@@ -1724,7 +1735,7 @@ function lobbyView(o) {
 function openLobbyHost() {
   resetModes(); closeSheets(); lobby = { role: 'host' };
   lobbyView({ title: 'Duel a friend, live', name: true, go: 'Create link',
-    note: `You'll get a link to send. The duel starts when your friend opens it. Both start with ${fmt(HP0)} HP; each round the shorter voyage loses the difference in km, times ×1.5 rising to ×2.5.` });
+    note: `You'll get a link to send. The duel starts when your friend opens it. Both start with ${fmt(HP0)} HP; the winner of each round hits for the difference in km, times ×1.5, then ×2, then ×2.5 as they win more rounds.` });
   $('lobby').hidden = false; $('nameInput').focus();
 }
 async function lobbyGo() {
@@ -1801,7 +1812,7 @@ async function openLobbyGuest(code) {
   if (st.role === 'guest') return lobbyStarting(st);
   if (st.full) return lobbyError('This duel is full', 'Two sailors are already in it. Ask your friend for a new link.');
   lobbyView({ eyebrow: 'Duel', title: `${st.host_name} challenged you`, name: true, go: 'Join the duel',
-    note: `A live duel on the same spots. Both start with ${fmt(HP0)} HP; each round the shorter voyage loses the difference in km, times ×1.5 rising to ×2.5. Once one of you locks in, the other has 15 seconds.` });
+    note: `A live duel on the same spots. Both start with ${fmt(HP0)} HP; the winner of each round hits for the difference in km, times ×1.5, then ×2, then ×2.5 as they win more rounds. Once one of you locks in, the other has 15 seconds.` });
   $('nameInput').focus();
 }
 async function joinDuel() {
