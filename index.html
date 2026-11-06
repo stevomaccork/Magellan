@@ -87,7 +87,30 @@ header { display: flex; align-items: center; gap: 8px; min-width: 0; }
 }
 .eyebrow { font-size: 12px; font-weight: 900; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-soft); }
 .loc strong { display: block; font-size: 19px; font-weight: 900; line-height: 1.2; text-wrap: balance; }
-.aimrow { display: grid; grid-template-columns: auto auto 1fr auto auto; gap: 6px; align-items: center; }
+.aimrow { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto auto; gap: 6px; align-items: center; }
+.aimhead { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 12px; align-items: center; }
+/* the heading is drawn on the tape; this copy is for screen readers */
+.aimhead .hdg { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.cu canvas { width: 60px; height: 60px; border-radius: 50%; display: block; border: 2px solid var(--ink); background: var(--sea); box-sizing: border-box; }
+.eyebrow:empty { display: none; }
+.eyebrow.alert { color: var(--coral-deep); }
+#aimCard.sailing .aimrow, #aimCard.sailing .keys { visibility: hidden; }
+/* while sailing, the button slot becomes a live distance readout */
+#aimCard.sailing #sailBtn { background: var(--ink); color: var(--sun); box-shadow: none; opacity: 1; font-variant-numeric: tabular-nums; }
+body.sailing .tools { display: none; }
+@media (max-width: 599px), (max-height: 520px) and (min-aspect-ratio: 4/3) { .nudge.big { display: none; } .aimrow { grid-template-columns: auto minmax(0, 1fr) auto; } }
+@media (max-width: 419px) {
+  body.playing .logo { display: none; }
+  body.playing .tag { font-size: 18px; }
+  .res-head h2 { font-size: 22px; }
+  .pts b { font-size: 28px; }
+  .res-head p { font-size: 12.5px; }
+  #revealCard .note { font-size: 12.5px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+}
+@media (max-width: 419px) and (max-height: 700px) {
+  .cu canvas { width: 50px; height: 50px; } .aimhead { grid-template-columns: 50px minmax(0, 1fr); }
+  #revealCard .revbody { grid-template-columns: 64px minmax(0, 1fr); } #revealCard .rosebtn, #revealCard #rose { width: 64px; height: 64px; }
+}
 .nudge {
   height: 40px; min-width: 44px; border-radius: 12px; border: 2px solid var(--line); background: var(--foam);
   color: var(--ink); font: 800 14px var(--body); cursor: pointer; font-variant-numeric: tabular-nums; padding: 0 6px;
@@ -95,9 +118,10 @@ header { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .nudge:active { transform: translateY(1px); }
 .nudge:disabled { opacity: .45; }
 .hdg { text-align: center; line-height: 1; }
-.hdg #hdgNum { font-family: var(--display); font-size: 34px; letter-spacing: .5px; font-variant-numeric: tabular-nums; }
+.hdg #hdgNum { font-family: var(--display); font-size: 32px; letter-spacing: .5px; font-variant-numeric: tabular-nums; }
 .hdg #hdgCard { display: block; font-size: 12px; font-weight: 900; letter-spacing: 1.5px; color: var(--ink-soft); margin-top: 3px; }
-#tape { width: 100%; height: 44px; display: block; border-radius: 12px; cursor: ew-resize; touch-action: none; }
+#tape { width: 100%; height: 54px; display: block; border-radius: 12px; cursor: ew-resize; touch-action: none; }
+.aimrow .nudge { height: 54px; }
 .primary {
   height: 54px; border: 0; border-radius: 16px; background: var(--coral); color: var(--foam); cursor: pointer;
   font: 400 23px var(--display); letter-spacing: .6px; box-shadow: inset 0 -5px 0 var(--coral-deep); width: 100%;
@@ -199,7 +223,7 @@ td .sq { letter-spacing: 1px; }
 .shake { animation: shake .45s; }
 @keyframes shake { 20% { transform: translate(-6px, 2px); } 40% { transform: translate(5px, -3px); } 60% { transform: translate(-3px, 2px); } 80% { transform: translate(2px, -1px); } }
 @media (max-height: 700px) { .modal h1 { font-size: 36px; } .lede { font-size: 15px; } .steps { gap: 9px; } .steps span { font-size: 13px; } .steps b { font-size: 14.5px; } .modal .card { gap: 11px; padding: 16px; } .sticky-actions { bottom: -16px; margin: 0 -16px -16px; padding: 12px 16px 16px; } }
-@media (max-height: 680px) { .ui .card { padding: 10px 12px 12px; gap: 7px; } .primary { height: 46px; font-size: 20px; } #tape { height: 36px; } .hdg #hdgNum { font-size: 28px; } .loc strong { font-size: 17px; } .steps li { grid-template-columns: 42px 1fr; } .steps svg { width: 42px; height: 42px; } }
+@media (max-height: 680px) { .ui .card { padding: 10px 12px 12px; gap: 7px; } .primary { height: 46px; font-size: 20px; } #tape { height: 48px; } .aimrow .nudge { height: 48px; } .hdg #hdgNum { font-size: 28px; } .loc strong { font-size: 17px; } .steps li { grid-template-columns: 42px 1fr; } .steps svg { width: 42px; height: 42px; } }
 @media (max-width: 370px) { .chip { padding: 2px 7px 3px; } .logo { font-size: 22px; } .nudge { min-width: 38px; } }
 @media (max-height: 520px) and (min-aspect-ratio: 4/3) {
   .ui { max-width: none; grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); grid-template-rows: auto minmax(0, 1fr); column-gap: 14px; }
@@ -314,10 +338,6 @@ td .sq { letter-spacing: 1px; }
 body.duel .brand { display: none; }
 @media (min-width: 480px) { body.duel .brand { display: flex; } }
 /* close-up circle around the boat while aiming */
-.closeup { position: absolute; left: 0; bottom: 8px; display: grid; justify-items: center; gap: 3px; pointer-events: none; }
-.closeup canvas { width: 108px; height: 108px; border-radius: 50%; border: 3px solid var(--foam); box-shadow: 0 4px 14px rgba(0,0,0,.45); background: var(--sea); display: block; }
-.closeup span { font-size: 11px; font-weight: 900; text-shadow: 0 1px 3px rgba(0,0,0,.9); }
-@media (max-height: 700px) { .closeup canvas { width: 84px; height: 84px; } }
 /* aim / explore switch (practice on Easy) */
 .modeswitch { position: absolute; left: 0; top: 58px; display: flex; background: var(--glass); border: 2px solid rgba(255,255,255,.22); border-radius: 999px; padding: 3px; pointer-events: auto; }
 .modeswitch button { border: 0; border-radius: 999px; background: none; color: var(--foam); font: 900 13.5px var(--body); padding: 7px 13px; cursor: pointer; min-height: 34px; }
@@ -388,7 +408,6 @@ td.won { color: var(--coral-deep); font-weight: 900; }
     <div class="hint" id="hint"></div>
     <div class="toast" id="toast"><span id="toastBig">Ran aground!</span><small id="toastSmall"></small></div>
     <div class="scale" id="scale" aria-hidden="true"><span id="scaleTxt"></span><i id="scaleBar"></i></div>
-    <div class="closeup" id="closeupBox" hidden><canvas id="closeup" aria-hidden="true"></canvas><span>Close-up · 60 km across</span></div>
     <div class="modeswitch" id="modeSwitch" role="radiogroup" aria-label="What dragging the globe does" hidden><button type="button" role="radio" id="msAim" aria-checked="true">Aim</button><button type="button" role="radio" id="msLook" aria-checked="false">Explore</button></div>
     <div class="tools">
       <button class="tool" id="zin" aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -399,15 +418,18 @@ td.won { color: var(--coral-deep); font-weight: 900; }
 
   <section class="card" id="aimCard">
     <div class="timer" id="timerBar" hidden><i id="timerFill"></i></div>
-    <div class="loc"><span class="eyebrow" id="locEyebrow">Spot 1 of 10</span><strong id="locName">Loading the oceans...</strong></div>
-    <div class="aimrow">
-      <button class="nudge" data-d="-1" aria-label="Turn 1 degree left">-1°</button>
-      <button class="nudge" data-d="-0.1" aria-label="Turn a tenth of a degree left">-0.1</button>
-      <div class="hdg"><span id="hdgNum">0.0°</span><span id="hdgCard">N</span></div>
-      <button class="nudge" data-d="0.1" aria-label="Turn a tenth of a degree right">+0.1</button>
-      <button class="nudge" data-d="1" aria-label="Turn 1 degree right">+1°</button>
+    <div class="aimhead">
+      <div class="cu" id="closeupBox" title="Close-up: the 60 km around your boat"><canvas id="closeup" role="img" aria-label="Close-up of the 60 km around your boat"></canvas></div>
+      <div class="loc"><span class="eyebrow" id="locEyebrow"></span><strong id="locName">Loading the oceans...</strong></div>
+      <div class="hdg" aria-live="polite"><span id="hdgNum">0.0°</span> <span id="hdgCard">N</span></div>
     </div>
-    <canvas id="tape" tabindex="0" aria-label="Heading tape. Drag sideways, or use the arrow keys (Shift for 0.1 degree steps)."></canvas>
+    <div class="aimrow">
+      <button class="nudge big" data-d="-1" aria-label="Turn 1 degree left">-1°</button>
+      <button class="nudge" data-d="-0.1" aria-label="Turn a tenth of a degree left">-0.1°</button>
+      <canvas id="tape" tabindex="0" aria-label="Heading tape. Drag sideways, or use the arrow keys (Shift for 0.1 degree steps)."></canvas>
+      <button class="nudge" data-d="0.1" aria-label="Turn a tenth of a degree right">+0.1°</button>
+      <button class="nudge big" data-d="1" aria-label="Turn 1 degree right">+1°</button>
+    </div>
     <p class="keys"><kbd>←</kbd> <kbd>→</kbd> turn 1° · hold <kbd>Shift</kbd> for 0.1° · <kbd>Enter</kbd> sets sail</p>
     <button class="primary" id="sailBtn" disabled>Set sail</button>
   </section>
@@ -966,7 +988,7 @@ function updateScale() {
   const nice = (m >= 5 ? 5 : m >= 2 ? 2 : 1) * p;
   $('scaleBar').style.width = (nice / kmpx).toFixed(1) + 'px';
   $('scaleTxt').textContent = fmt(nice) + ' km';
-  $('scale').hidden = view.R < BASE * 0.95 || !$('closeupBox').hidden;
+  $('scale').hidden = view.R < BASE * 0.95;
 }
 
 // ---- main loop ----
@@ -1025,7 +1047,6 @@ const cu = $('closeup'), cuctx = cu.getContext('2d'), cuProj = d3.geoOrthographi
 let cuKey = '';
 function drawCloseup() {
   const show = !!(game && cur && ['arriving', 'aim', 'locked'].includes(game.phase));
-  if ($('closeupBox').hidden === show) { $('closeupBox').hidden = !show; lastScaleR = 0; }
   if (!show) { cuKey = ''; return; }
   const w = cu.clientWidth; if (!w) return;
   const key = [cur.k, heading, w, game.phase].join('|'); if (key === cuKey) return; cuKey = key;
@@ -1069,8 +1090,15 @@ function drawTape() {
   const fade = c.createLinearGradient(0, 0, w, 0);
   fade.addColorStop(0, 'rgba(11,42,66,1)'); fade.addColorStop(.18, 'rgba(11,42,66,0)'); fade.addColorStop(.82, 'rgba(11,42,66,0)'); fade.addColorStop(1, 'rgba(11,42,66,1)');
   c.fillStyle = fade; c.fillRect(0, 0, w, h);
-  c.fillStyle = '#ff5d4f'; c.beginPath(); c.moveTo(w / 2 - 8, 0); c.lineTo(w / 2 + 8, 0); c.lineTo(w / 2, 10); c.closePath(); c.fill();
-  c.fillRect(w / 2 - 1.5, h - 16, 3, 16);
+  c.fillStyle = '#ff5d4f'; c.fillRect(w / 2 - 1.5, h - 16, 3, 16);
+  // the heading itself, in a pill over the centre of the tape
+  const txt = `${heading.toFixed(1)}° ${cardinal(heading)}`;
+  c.font = '400 17px "Lilita One", Nunito, system-ui, sans-serif';
+  const tw = c.measureText(txt).width + 20, ph = 23;
+  c.beginPath(); if (c.roundRect) c.roundRect(w / 2 - tw / 2, 3, tw, ph, 11.5); else c.rect(w / 2 - tw / 2, 3, tw, ph); c.fill();
+  c.beginPath(); c.moveTo(w / 2 - 5, 3 + ph - 1); c.lineTo(w / 2 + 5, 3 + ph - 1); c.lineTo(w / 2, 3 + ph + 5); c.closePath(); c.fill();
+  c.fillStyle = '#ffffff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(txt, w / 2, 3 + ph / 2 + 1);
+  c.textBaseline = 'alphabetic';
 }
 function setHeading(h) {
   heading = norm(h);
@@ -1119,7 +1147,11 @@ function aimFromPoint(x, y) {
     const [lo2, la2] = ll, la1 = cur.lat * D2R, dl = (lo2 - cur.lon) * D2R, p2 = la2 * D2R;
     setHeading(Math.atan2(Math.sin(dl) * Math.cos(p2), Math.cos(la1) * Math.sin(p2) - Math.sin(la1) * Math.cos(p2) * Math.cos(dl)) * R2D);
   } else setHeading(Math.atan2(dx, -dy) * R2D);
-  if (game.round === 0 && roundObj().sails.length === 0) showHint(game.mode === 'tutorial' ? 'Fine-tune with the tape or the ±0.1° buttons, then tap Set sail' : 'Fine-tune with the tape, then Set sail');
+  if (game.round === 0 && roundObj().sails.length === 0 && !game.fineHinted && (game.mode === 'tutorial' || !store.aimHinted)) {
+    game.fineHinted = true; store.aimHinted = true; saveStore();
+    const txt = game.mode === 'tutorial' ? 'Fine-tune with the tape or the ±0.1° buttons, then tap Set sail' : 'Fine-tune with the tape, then Set sail';
+    showHint(txt); setTimeout(() => { if (hint.textContent === txt) showHint(''); }, 4500);
+  }
 }
 const freeLook = () => view.look || !game || ['sailed', 'reveal', 'final'].includes(game.phase);
 // any camera action during the fly-in finishes the fly-in first, so the boat is centred and Set sail unlocks
@@ -1180,13 +1212,14 @@ function updateHud() {
   const daily = game && game.mode === 'daily', h2h = !!(game && game.mode === 'h2h');
   const n = spotsIn(game);
   document.body.classList.toggle('duel', h2h);
+  document.body.classList.toggle('playing', !!(game && game.phase !== 'final'));
   $('modeTag').innerHTML = '';
   if (h2h) {
     // narrow phones get just the flag here; the aim card names the opponent
     const full = document.createElement('span'); full.className = 'tfull'; full.textContent = `vs ${game.opp.name} ${flag(game.opp.cc)}`.trim();
     const short = document.createElement('span'); short.className = 'tshort'; short.textContent = flag(game.opp.cc) || 'Duel';
     $('modeTag').append(full, short);
-  } else $('modeTag').append(daily ? `#${game.n}` : game && game.mode === 'test' ? `Test #${game.n}` : (game ? 'Practice' : `#${todayNum()}`));
+  } else $('modeTag').append(daily ? `Voyage #${game.n}` : game && game.mode === 'test' ? `Test #${game.n}` : (game ? 'Practice' : `#${todayNum()}`));
   $('hpBox').hidden = !h2h; $('scoreChip').hidden = h2h;
   if (h2h) {
     const [y, o] = hpOf(game);
@@ -1222,16 +1255,16 @@ function arrive(fast) {
   game.phase = 'arriving';
   setLook(false);
   showCard('aimCard'); $('sailBtn').disabled = true;
-  $('locEyebrow').textContent = h2h ? `Round ${game.round + 1}${roundMult(game.round) > 1 ? ` · damage ×${roundMult(game.round)}` : ''} · vs ${game.opp.name}`
-    : game.mode === 'tutorial' ? 'Practice voyage · nothing counts'
-    : `Spot ${game.round + 1} of ${spotsIn(game)} · your boat is moored`;
+  $('locEyebrow').classList.remove('alert'); $('aimCard').classList.remove('sailing'); document.body.classList.remove('sailing');
+  $('locEyebrow').textContent = h2h ? (roundMult(game.round) > 1 ? `Damage ×${roundMult(game.round)} this round` : '')
+    : game.mode === 'tutorial' ? 'Practice voyage · nothing counts' : '';
   // every spot opens pointing north so the default heading carries no hint; a retry starts from the last heading
   setHeading(r.sails.length ? lastSail(r).h : 0);
   showHint('');
   stopFly(false);
   const done = () => {
     game.phase = 'aim'; $('sailBtn').disabled = false;
-    if (game.round === 0 && r.sails.length === 0) showHint(game.mode === 'tutorial' ? 'Drag anywhere on the globe to point your boat' : 'Drag on the globe to aim');
+    if (game.round === 0 && r.sails.length === 0 && (game.mode === 'tutorial' || !store.aimHinted)) showHint(game.mode === 'tutorial' ? 'Drag anywhere on the globe to point your boat' : 'Drag on the globe to aim');
     if (h2h) duelAim();
     snap();
   };
@@ -1253,9 +1286,10 @@ function setSail(auto) {
 function beginSail() {
   const r = roundObj(), s = lastSail(r);
   game.phase = 'sailing'; clearLockTimer();
-  showHint('Tap the globe to skip');
-  $('locEyebrow').textContent = `Sailing ${s.h.toFixed(1)}° ${cardinal(s.h)}`; $('locName').textContent = '0 km';
-  $('sailBtn').textContent = 'Set sail'; $('sailBtn').disabled = true;
+  $('aimCard').classList.add('sailing'); document.body.classList.add('sailing'); $('locEyebrow').classList.remove('alert');
+  if (!store.skipHinted || game.mode === 'tutorial') { store.skipHinted = true; saveStore(); showHint('Tap the globe to skip'); } else showHint('');
+  $('locEyebrow').textContent = `Sailing ${s.h.toFixed(1)}° ${cardinal(s.h)}`;
+  $('sailBtn').textContent = '0 km'; $('sailBtn').disabled = true;
   const mk = (h, d) => { const [A, B] = basis(cur.lat, cur.lon, h); return { h, d, A, B, km: 0, u: 0, pos: { lat: cur.lat, lon: cur.lon, brg: h },
     ms: reduceMotion ? 700 : d < 400 ? 1400 : Math.min(6500, 500 + d * 0.24) }; };
   const t0 = performance.now();
@@ -1278,7 +1312,7 @@ function stepSail(now) {
   view.lat = a.lat0 + (a.pos.lat - a.lat0) * settle;
   let dl = ((a.pos.lon - a.lon0 + 540) % 360) - 180; view.lon = a.lon0 + dl * settle;
   if (oppAnim) { const o = oppAnim; o.u = Math.min(1, (now - o.t0) / o.ms); o.km = o.d * easeSail(o.u); o.pos = pointAt(o.A, o.B, o.km); }
-  $('locName').textContent = `${fmt(a.km)} km`;
+  $('sailBtn').textContent = `${fmt(a.km)} km`;
   if (u >= 1 && !a.landed) { a.landed = true; crashFx(a); }
   if (u >= 1 && (!oppAnim || oppAnim.u >= 1)) finishSail();
 }
@@ -1304,7 +1338,7 @@ function crashFx(a) {
   later(() => $('toast').classList.remove('show'), 1600);
 }
 function finishSail() {
-  const a = sailAnim; sailAnim = null;
+  const a = sailAnim; sailAnim = null; document.body.classList.remove('sailing');
   if (a && !a.landed) { a.landed = true; crashFx(a); }
   oppAnim = null;
   const s = lastSail(roundObj());
@@ -1326,8 +1360,7 @@ function reveal(restored) {
   game.phase = 'reveal'; showHint(''); setLook(false); clearLockTimer();
   persist(); updateHud();
   const lf = landfallText(b.hit);
-  $('revEyebrow').textContent = h2h ? `Round ${game.round + 1}${roundMult(game.round) > 1 ? ` · damage ×${roundMult(game.round)}` : ''} · ${spotShort(s)}`
-    : tut ? `Practice voyage · ${spotShort(s)}` : `Spot ${game.round + 1} of ${spotsIn(game)} · ${spotShort(s)}`;
+  $('revEyebrow').textContent = h2h && roundMult(game.round) > 1 ? `${spotShort(s)} · damage ×${roundMult(game.round)}` : spotShort(s);
   $('barOppRow').hidden = !h2h; $('bars').classList.toggle('h2h', h2h);
   const od = h2h && r.opp ? Math.max(0, r.opp.d) : 0;
   const pct = Math.round(100 * Math.max(0, b.d) / s.best);
@@ -1558,7 +1591,8 @@ let lockTimer = null, botTimer = null, pollT = null;
 function startLockTimer() {
   if (lockTimer || !game || game.phase !== 'aim') return;
   lockTimer = { end: performance.now() + (window.MAGELLAN_TEST_LOCK_MS || LOCK_MS) };
-  $('timerBar').hidden = false; showHint(`${game.opp.name} has locked in. 15 seconds!`);
+  $('timerBar').hidden = false; showHint('');
+  $('locEyebrow').textContent = `${game.opp.name} locked in!`; $('locEyebrow').classList.add('alert');
 }
 function clearLockTimer() { lockTimer = null; $('timerBar').hidden = true; $('sailBtn').classList.remove('urgent'); }
 function tickLockTimer(now) {
@@ -1593,7 +1627,7 @@ function oppLocks(i) {
 function duelLocked(resumed) {
   const g = game, r = roundObj(), i = g.round;
   $('sailBtn').disabled = true; $('sailBtn').textContent = 'Locked in';
-  showHint(`Locked in at ${lastSail(r).h.toFixed(1)}°. Waiting for ${g.opp.name}...`);
+  showHint(''); $('locEyebrow').classList.remove('alert'); $('locEyebrow').textContent = `Locked in at ${lastSail(r).h.toFixed(1)}° · waiting for ${g.opp.name}`;
   if (g.kind === 'bot') {
     if (r.oppLocked) return bothLocked();
     clearTimeout(botTimer); botTimer = setTimeout(() => oppLocks(i), window.MAGELLAN_TEST_BOT_MS || 1500 + Math.random() * 4500);
@@ -1651,7 +1685,7 @@ function applyDuelState(st) {
   // an opponent who stops checking in for 45 seconds while you wait can be beaten by forfeit
   if (g.phase === 'locked' && (g.oppSeen == null || g.oppSeen > 45)) {
     g.canClaim = true; $('sailBtn').disabled = false; $('sailBtn').textContent = 'Claim the win';
-    showHint(`${g.opp.name} seems to have left the duel.`);
+    $('locEyebrow').textContent = `${g.opp.name} seems to have left the duel`; $('locEyebrow').classList.add('alert');
   }
 }
 function claimWin() { if (!game || !game.canClaim) return; game.forfeit = 'opp'; finish(); }
