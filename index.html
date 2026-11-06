@@ -338,7 +338,7 @@ td .sq { letter-spacing: 1px; }
 body.duel .brand { display: none; }
 @media (min-width: 480px) { body.duel .brand { display: flex; } }
 /* close-up circle around the boat while aiming */
-/* aim / explore switch (practice on Easy) */
+/* aim / explore switch (practice only) */
 .modeswitch { position: absolute; left: 0; top: 58px; display: flex; background: var(--glass); border: 2px solid rgba(255,255,255,.22); border-radius: 999px; padding: 3px; pointer-events: auto; }
 .modeswitch button { border: 0; border-radius: 999px; background: none; color: var(--foam); font: 900 13.5px var(--body); padding: 7px 13px; cursor: pointer; min-height: 34px; }
 .modeswitch button[aria-checked="true"] { background: var(--sun); color: var(--ink); }
@@ -472,7 +472,7 @@ td.won { color: var(--coral-deep); font-weight: 900; }
         <li><b>Daily voyage:</b> 10 spots, the same for everyone and the same rules. A new one every midnight, ranked worldwide.</li>
         <li><b>Head to head:</b> a duel. Both start with 20,000 HP; each round the shorter voyage loses the difference in km. Once one sailor locks in, the other has 15 seconds.</li>
         <li><b>Challenge a friend:</b> send a link and duel live.</li>
-        <li><b>Practice:</b> random spots, with as much help as you like.</li>
+        <li><b>Practice:</b> random spots, no score. Switch to Explore to spin the globe, and try any spot again.</li>
       </ul>
       <p class="note" id="privacyNote" hidden>To rank you against other players, the game keeps an anonymous ID for this device, when you start a daily voyage and your daily scores. No emails or accounts. Friend duels also store the name you type.</p>
     </section>
@@ -482,7 +482,7 @@ td.won { color: var(--coral-deep); font-weight: 900; }
       <button type="button" class="modecard daily" id="playBtn"><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z" fill="currentColor"/></svg></span><b>Daily voyage <span id="todayNum">#1</span></b><span class="mc-sub">Same 10 spots for everyone. Ranked worldwide.</span><span class="mc-status" id="dailyStatus"></span><span class="mc-go" aria-hidden="true">›</span></button>
       <button type="button" class="modecard duel" id="h2hBtn"><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l10 10M20 4L10 14M6.5 16.5L4 19M17.5 16.5L20 19M5 13l6 6M19 13l-6 6"/></svg></span><b>Head to head</b><span class="mc-sub">Duel another sailor. 20,000 HP each.</span><span class="mc-status" id="duelStatus"></span><span class="mc-go" aria-hidden="true">›</span></button>
       <button type="button" class="modecard friend" id="friendBtn" hidden><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="16.5" cy="9" r="3"/><path d="M2.5 19c.8-3 3-4.5 5.5-4.5s4.7 1.5 5.5 4.5M12 17c.9-1.7 2.5-2.5 4.5-2.5 2.4 0 4.2 1.5 5 4.5"/></svg></span><b>Challenge a friend</b><span class="mc-sub">Send a link, duel live.</span><span class="mc-go" aria-hidden="true">›</span></button>
-      <button type="button" class="modecard practice" id="practiceBtn"><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg></span><b>Practice</b><span class="mc-sub">Random spots. Retry any of them.</span><span class="mc-go" aria-hidden="true">›</span></button>
+      <button type="button" class="modecard practice" id="practiceBtn"><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg></span><b>Practice</b><span class="mc-sub">No score. Explore the globe, retry any spot.</span><span class="mc-go" aria-hidden="true">›</span></button>
       <p class="note" id="todayStreak"></p>
       <p class="note" id="todayH2h" hidden></p>
     </section>
@@ -493,24 +493,6 @@ td.won { color: var(--coral-deep); font-weight: 900; }
       <button class="primary" id="backBtn" hidden>Back</button>
       <button class="ghost" id="testBtn" hidden>Test upcoming voyages</button>
     </div>
-  </div>
-</div>
-
-<div class="modal" id="practiceSheet" hidden>
-  <div class="card" role="dialog" aria-modal="true" aria-labelledby="practiceTitle">
-    <div><span class="eyebrow">Practice</span><h2 class="sheet-h" id="practiceTitle">How much help?</h2>
-      <p class="note">Ten random spots. Nothing counts. Daily voyages and head to head always use Medium.</p></div>
-    <div class="levels" id="levelBox">
-      <div class="lvl" role="radiogroup" aria-label="Practice level">
-        <span class="rl head">Level</span>
-        <button type="button" role="radio" data-level="easy" aria-checked="true">Easy</button>
-        <button type="button" role="radio" data-level="normal" aria-checked="false">Medium</button>
-        <button type="button" role="radio" data-level="hard" aria-checked="false">Hard</button>
-        <span class="rl">While aiming</span><span data-level="easy">Spin the globe</span><span data-level="normal">Fixed globe</span><span data-level="hard">Fixed globe</span>
-        <span class="rl">Course line</span><span data-level="easy">Whole course</span><span data-level="normal">First 2,500 km</span><span data-level="hard">First 1,000 km</span>
-      </div>
-    </div>
-    <div class="btnrow lead"><button class="ghost" id="practiceCancel">Cancel</button><button class="primary" id="practiceGo">Start practice</button></div>
   </div>
 </div>
 
@@ -607,17 +589,16 @@ td.won { color: var(--coral-deep); font-weight: 900; }
 const RE = 6371.0088, RES = 0.02, NX = 18000, NY = 9000, MAXKM = 40030;
 const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 const SPOTS = 10, SAILS = 1, FULL = 1; // points scale straight with distance: 92% of the best voyage = 4,600
-// span = how far across (km) the shorter side of the screen can show while aiming; null = whole globe
-// fixed = while aiming, the globe stays centred on the boat showing the whole hemisphere: no spinning, no zooming.
-// Daily voyages and duels always use Medium so everyone plays the same rules; the levels are practice settings.
+// Two rule sets. Everything that counts (daily voyages, duels) uses 'normal': while aiming the globe stays centred
+// on the boat showing the whole hemisphere, with no spinning or zooming. Practice is the same, except you can switch
+// to Explore and spin the globe. preview = how much of the course is drawn while aiming (km).
 const LEVELS = {
-  easy: { id: 'easy', name: 'Easy', mult: 1, span: null, preview: 2500, course: true, fixed: false },
-  normal: { id: 'normal', name: 'Medium', mult: 1, span: null, preview: 2500, course: false, fixed: true },
-  hard: { id: 'hard', name: 'Hard', mult: 1, span: null, preview: 1000, course: false, fixed: true },
+  normal: { id: 'normal', name: 'Standard', mult: 1, span: null, preview: 2500, course: false, fixed: true },
+  practice: { id: 'practice', name: 'Practice', mult: 1, span: null, preview: 2500, course: false, fixed: false },
 };
 const STANDARD = 'normal';
-const levelOf = id => LEVELS[id] || LEVELS.easy;
-const level = () => levelOf((game && game.level) || (typeof store !== 'undefined' && store.level));
+const levelOf = id => LEVELS[id] || LEVELS.normal;
+const level = () => levelOf(game && game.level);
 // Site settings come from config.js (see site/config.js); without it the game runs fully offline.
 const CFG = window.MAGELLAN_CONFIG || {};
 const LAUNCH = /^\d{4}-\d{2}-\d{2}$/.test(CFG.launch || '') ? Date.parse(CFG.launch + 'T00:00:00Z') : Date.UTC(2026, 10, 5);
@@ -817,7 +798,7 @@ const levelMinR = () => { const L = level(); return L.span ? Math.min(W, H) * RE
 // the zoom-out limit holds until the spot is revealed
 const limited = () => !!(game && ['arriving', 'aim', 'sailing', 'sailed'].includes(game.phase));
 const minRNow = () => (limited() ? Math.max(BASE * 0.4, levelMinR()) : BASE * 0.4);
-const R_ = { close: () => BASE * 12, aim: () => (level().fixed ? BASE * 0.47 : Math.max(BASE * 1.3, levelMinR())), cruise: () => BASE * 0.46, crash: () => BASE * 3, world: () => BASE * 0.5 };
+const R_ = { close: () => BASE * 12, aim: () => BASE * 0.47, cruise: () => BASE * 0.46, crash: () => BASE * 3, world: () => BASE * 0.5 };
 // while aiming on a fixed level the globe stays centred on the boat: no spinning, no zooming
 const fixedAim = () => !!(game && cur && ['arriving', 'aim', 'locked'].includes(game.phase) && level().fixed);
 function measure() { const r = stageEl.getBoundingClientRect(); CX = r.left + r.width / 2; CY = r.top + r.height / 2; layerKey = ''; }
@@ -1118,7 +1099,6 @@ document.addEventListener('keydown', e => {
     if (!$('roseModal').hidden) { $('roseModal').hidden = true; return; }
     if (!$('matching').hidden) { cancelMatchmaking(); return; }
     if (!$('lobby').hidden) { closeLobby(); return; }
-    if (!$('practiceSheet').hidden) { $('practiceCancel').click(); return; }
     if (!$('tests').hidden) { $('testsClose').click(); return; }
     if (!$('menu').hidden && !$('backBtn').hidden) { $('backBtn').click(); return; }
     if (!$('menu').hidden && !$('resumeCard').hidden && !$('today').hidden) { $('resumeCard').click(); return; }
@@ -1188,7 +1168,7 @@ const sailingNow = () => !!(game && game.phase === 'sailing');
 cv.addEventListener('wheel', e => { e.preventDefault(); if (sailingNow() || fixedAim()) return; interrupt(); view.R = clampR(view.R * Math.exp(-e.deltaY * 0.0015)); }, { passive: false });
 $('zin').onclick = () => { if (sailingNow() || fixedAim()) return; interrupt(); fly(view.lat, view.lon, clampR(view.R * 1.8), 350); };
 $('zout').onclick = () => { if (sailingNow() || fixedAim()) return; interrupt(); fly(view.lat, view.lon, clampR(view.R / 1.8), 350); };
-// Aim / Explore switch (practice on Easy only; every other level keeps the globe fixed while aiming)
+// Aim / Explore switch: practice only. Daily voyages and duels keep the globe fixed while aiming
 function setLook(on) {
   view.look = !!on;
   $('msAim').setAttribute('aria-checked', String(!on)); $('msLook').setAttribute('aria-checked', String(!!on));
@@ -1861,7 +1841,7 @@ function shareText(g) {
   const total = g.rounds.reduce((a, r) => a + r.pts, 0);
   const rows = g.rounds.map((r, i) => square(Math.max(0, bestSail(r).d), DATA.starts[g.picks[i]].best));
   const km = g.rounds.reduce((a, r) => a + Math.max(0, bestSail(r).d), 0);
-  const head = g.mode === 'daily' ? `Magellan #${g.n}` : g.mode === 'test' ? `Magellan #${g.n} (test run)` : `Magellan practice · ${levelOf(g.level).name}`;
+  const head = g.mode === 'daily' ? `Magellan #${g.n}` : g.mode === 'test' ? `Magellan #${g.n} (test run)` : 'Magellan practice';
   const world = g.mode === 'daily' && worldPct !== null ? `\nBeat ${worldPct}% of today's sailors` : '';
   return `${head} ⛵ ${fmt(total)}\n${rows.map((r, i) => r + ((i + 1) % 5 === 0 && i < rows.length - 1 ? '\n' : '')).join('')}${world}\n${fmt(km)} km sailed\n${SHARE_URL}`;
 }
@@ -1934,7 +1914,7 @@ function showFinal() {
   $('finEyebrow').textContent = daily ? `Voyage #${g.n} complete` : g.mode === 'test' ? `Test run of voyage #${g.n} complete` : 'Practice voyage complete';
   const L = levelOf(g.level);
   $('finTotal').innerHTML = `${fmt(total)} <small>/ ${fmt(SPOTS * 5000)}</small>`;
-  $('finRank').textContent = RANKS.find(([m]) => total >= m)[1] + (g.mode === 'practice' ? ` · ${L.name}` : '');
+  $('finRank').textContent = RANKS.find(([m]) => total >= m)[1];
   const tb = $('finRows'); tb.innerHTML = '';
   g.rounds.forEach((r, i) => {
     const s = DATA.starts[g.picks[i]]; const b = bestSail(r);
@@ -1995,12 +1975,12 @@ async function syncWorld(g, total) {
     const rec = store.days[g.n];
     if (rec && !rec.sent) {
       const base = g.rounds.reduce((a, r) => a + (r.base ?? r.pts), 0);
-      const res = await api('scores', { day: g.n, device: deviceId(), level: g.level || 'easy', total, base,
+      const res = await api('scores', { day: g.n, device: deviceId(), level: 'normal', total, base,
         headings: g.rounds.map(r => (r.sails.length ? r.sails[0].h : 0)) });
       if (!(res.ok || res.status === 409)) throw new Error('save ' + res.status);   // 409 = this device already sent today's score
       rec.sent = true; saveStore();
     }
-    const res2 = await api('rpc/day_rank', { p_day: g.n, p_total: total, p_level: g.level || 'easy' }, true);
+    const res2 = await api('rpc/day_rank', { p_day: g.n, p_total: total, p_level: 'normal' }, true);
     if (!res2.ok) throw new Error('rank ' + res2.status);
     const w = await res2.json();
     if (!game || game.n !== g.n || game.phase !== 'final') return;
@@ -2069,7 +2049,7 @@ $('copyBtn').onclick = () => {
 // ================= menus & modes =================
 // end whatever was running before a new game or screen starts
 function resetModes() { clearLater(); clearInterval(cdTimer); clearTimeout(matchTimer); stopDuelTimers(); sailAnim = null; oppAnim = null; }
-function closeSheets() { for (const id of ['menu', 'final', 'matching', 'lobby', 'practiceSheet', 'tests', 'roseModal']) $(id).hidden = true; }
+function closeSheets() { for (const id of ['menu', 'final', 'matching', 'lobby', 'tests', 'roseModal']) $(id).hidden = true; }
 const anySheet = () => [...document.querySelectorAll('.modal')].some(m => !m.hidden);
 function startDaily() {
   const n = todayNum(); const rec = dayRecord(n);
@@ -2085,7 +2065,7 @@ function startDaily() {
 }
 function startPractice() {
   resetModes();
-  game = { mode: 'practice', n: 0, level: store.level || 'easy', picks: practicePicks(), rounds: newRounds(), round: 0, phase: 'arriving' };
+  game = { mode: 'practice', n: 0, level: 'practice', picks: practicePicks(), rounds: newRounds(), round: 0, phase: 'arriving' };
   closeSheets(); arrive(false);
 }
 // kind: welcome (first visit) | today (the home page) | howto (full instructions)
@@ -2124,15 +2104,6 @@ function openMenu(kind) {
   $('menu').querySelector('.card').scrollTop = 0;
   if (!$('howto').hidden) startDemo();
 }
-function renderLevels() {
-  const sel = store.level || 'easy';
-  document.querySelectorAll('.lvl [data-level]').forEach(el => {
-    const on = el.dataset.level === sel; el.classList.toggle('on', on);
-    if (el.tagName === 'BUTTON') el.setAttribute('aria-checked', String(on));
-  });
-}
-document.querySelectorAll('.lvl [data-level]').forEach(el => el.addEventListener('click', () => { store.level = el.dataset.level; saveStore(); renderLevels(); }));
-function openPracticeSheet() { closeSheets(); renderLevels(); $('practiceSheet').hidden = false; $('practiceGo').focus(); }
 // ---- owner-only: play upcoming voyages early ----
 const voyageDate = n => { const d = new Date(LAUNCH); return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + n - 1); };
 function openTests() {
@@ -2165,9 +2136,7 @@ $('playBtn').onclick = () => {
 };
 $('tutBtn').onclick = () => { closeMenu(); startTutorial(); };
 $('skipBtn').onclick = () => { store.seen = true; saveStore(); openMenu('today'); };
-$('practiceBtn').onclick = () => openPracticeSheet();
-$('practiceGo').onclick = () => { closeMenu(); startPractice(); };
-$('practiceCancel').onclick = () => openMenu(store.seen ? 'today' : 'welcome');
+$('practiceBtn').onclick = () => { closeMenu(); startPractice(); };
 $('h2hBtn').onclick = () => { closeMenu(); if (matchLive()) resumeMatch(); else openMatchmaking(); };
 $('friendBtn').onclick = () => { closeMenu(); openLobbyHost(); };
 $('matchGo').onclick = () => { if (pendingOpp) startMatch(pendingOpp); };
