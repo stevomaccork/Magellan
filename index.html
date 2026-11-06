@@ -267,6 +267,34 @@ td .sq { letter-spacing: 1px; }
 .modes b { color: var(--ink); font-weight: 900; }
 .linkbtn { background: none; border: 0; color: var(--sea); font: 800 14.5px var(--body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 6px 12px; min-height: 40px; justify-self: center; }
 .ghost.vsbtn { border-color: var(--sea); color: var(--sea); font-weight: 900; }
+/* home page: one card per way to play */
+.home { display: grid; gap: 10px; }
+.hometitle { font-size: 38px !important; }
+.modecard { display: grid; grid-template-columns: 44px minmax(0, 1fr) 18px; column-gap: 12px; row-gap: 2px; align-items: center; text-align: left; width: 100%;
+  padding: 11px 12px 11px 11px; border-radius: 18px; border: 2px solid var(--line); background: var(--foam); color: var(--ink); cursor: pointer; font-family: var(--body);
+  box-shadow: inset 0 -3px 0 rgba(11, 42, 66, .07); box-sizing: border-box; }
+.modecard > .mc-ico { grid-row: 1 / span 3; grid-column: 1; align-self: start; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--sea); color: var(--foam); }
+.modecard .mc-ico svg { width: 24px; height: 24px; }
+.modecard > b { grid-column: 2; font-family: var(--display); font-weight: 400; font-size: 21px; line-height: 1.1; }
+.modecard > .mc-sub { grid-column: 2; font-size: 13px; font-weight: 700; color: var(--ink-soft); line-height: 1.3; }
+.modecard > .mc-status { grid-column: 2; font-size: 13px; font-weight: 900; color: var(--coral-deep); line-height: 1.3; }
+.modecard > .mc-status:empty { display: none; }
+.modecard > .mc-go { grid-column: 3; grid-row: 1 / span 3; font: 400 30px/1 var(--display); color: var(--ink-soft); }
+.modecard.daily { border-color: var(--coral); background: #fff3f1; }
+.modecard.daily > .mc-ico { background: var(--coral); }
+.modecard.duel > .mc-ico { background: #7b5cd6; }
+.modecard.friend > .mc-ico { background: #2a8f73; }
+.modecard.practice > .mc-ico { background: var(--ink); }
+.modecard.resume { border-color: var(--sea); background: rgba(29, 106, 163, .09); }
+.modecard:active { transform: translateY(1px); }
+@media (hover: hover) and (pointer: fine) { .modecard:hover { border-color: rgba(11, 42, 66, .4); } }
+@media (max-height: 700px) { .modecard { padding: 7px 10px 7px 9px; row-gap: 0; } .modecard > b { font-size: 19px; } .modecard > .mc-sub { font-size: 12.5px; } .modecard > .mc-ico { width: 38px; height: 38px; } .modecard { grid-template-columns: 38px minmax(0, 1fr) 16px; } .hometitle { font-size: 30px !important; } .home { gap: 8px; } }
+@media (max-height: 520px) and (min-aspect-ratio: 4/3) {
+  #menu.homeview .card { grid-template-columns: 1fr; }
+  #menu.homeview .sticky-actions { grid-column: 1; grid-row: auto; position: static; }
+  #menu.homeview #today { grid-template-columns: 1fr 1fr; }
+  #menu.homeview #today > .titlerow, #menu.homeview #today > .resume, #menu.homeview #today > .note { grid-column: 1 / -1; }
+}
 /* welcome, head icon */
 .welcome { display: grid; gap: 12px; justify-items: center; text-align: center; }
 .welcome .goal { font-size: 26px; }
@@ -354,7 +382,7 @@ td.won { color: var(--coral-deep); font-weight: 900; }
       <div class="hprow"><span class="who">You</span><span class="hpt"><i id="hpYou"></i></span><b id="hpYouNum">20,000</b></div>
       <div class="hprow opp"><span class="who" id="hpOppName">Them</span><span class="hpt"><i id="hpOpp"></i></span><b id="hpOppNum">20,000</b></div>
     </div>
-    <button class="iconbtn" id="helpBtn" aria-label="How to play">?</button>
+    <button class="iconbtn" id="helpBtn" aria-label="Home" title="Home"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11.5L12 4l8.5 7.5M6.5 9.5V20h11V9.5"/></svg></button>
   </header>
   <div class="stage" id="stage">
     <div class="hint" id="hint"></div>
@@ -426,20 +454,21 @@ td.won { color: var(--coral-deep); font-weight: 900; }
       </ul>
       <p class="note" id="privacyNote" hidden>To rank you against other players, the game keeps an anonymous ID for this device, when you start a daily voyage and your daily scores. No emails or accounts. Friend duels also store the name you type.</p>
     </section>
-    <section id="today" class="card-inner" style="display:grid;gap:12px" hidden>
-      <span class="eyebrow" id="todayDate"></span>
-      <h1>Voyage <span id="todayNum">#1</span></h1>
-      <p class="lede">10 spots around the world. One sail each. Same spots and same rules for everyone today.</p>
+    <section id="today" class="card-inner home" hidden>
+      <div class="titlerow"><svg class="headicon" width="50" height="50" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"> <defs><clipPath id="hct"><circle cx="60" cy="60" r="58"/></clipPath></defs> <circle cx="60" cy="60" r="58" fill="#1d6aa3"/> <g clip-path="url(#hct)"> <path d="M0 86 Q30 80 60 86 T120 86 V120 H0 Z" fill="#0d3f66"/> <path d="M14 120 Q20 96 44 92 L76 92 Q100 96 106 120 Z" fill="#1b1b22" stroke="#0b2a42" stroke-width="3"/> <g stroke="#0b2a42" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"> <ellipse cx="32.5" cy="62" rx="5.5" ry="8" fill="#e2a87c"/> <ellipse cx="87.5" cy="62" rx="5.5" ry="8" fill="#e2a87c"/> <path d="M35 52 Q35 32 60 32 Q85 32 85 52 L85 68 Q85 80 60 82 Q35 80 35 68 Z" fill="#efbf93"/> <path d="M32 60 Q34 72 43 72 Q50 78 60 77 Q70 78 77 72 Q86 72 88 60 Q97 90 84 108 Q74 121 60 121 Q46 121 36 108 Q23 90 32 60 Z" fill="#4b3e36"/> <path d="M44 72 Q52 64 60 68.5 Q68 64 76 72 Q68 75.5 60 72.5 Q52 75.5 44 72 Z" fill="#3a2f29"/> </g> <g fill="none" stroke-linecap="round"> <path d="M44 86 q3 5 0 10 M54 90 q3 5 0 10 M66 90 q3 5 0 10 M76 85 q3 5 0 10 M38 76 q2 4 0 8 M82 76 q2 4 0 8" stroke="#7d6a5d" stroke-width="2.2"/> <path d="M49 98 q3 5 0 10 M61 101 q3 5 0 9 M71 98 q3 5 0 9" stroke="#8f7f72" stroke-width="2"/> </g> <ellipse cx="60" cy="78.5" rx="4.4" ry="2.5" fill="#c4574a" stroke="#0b2a42" stroke-width="1.8"/> <path d="M58.5 51 Q53.5 62 55 64.5 Q60 67.5 65.5 64.5" fill="#e0a37b" stroke="#0b2a42" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/> <g stroke="#0b2a42" stroke-width="2.2"><ellipse cx="48.5" cy="53" rx="5.2" ry="4.4" fill="#fff"/><ellipse cx="71.5" cy="53" rx="5.2" ry="4.4" fill="#fff"/></g> <circle cx="50.5" cy="53.5" r="2.6" fill="#3b2516"/><circle cx="73.5" cy="53.5" r="2.6" fill="#3b2516"/> <circle cx="51.4" cy="52.5" r=".9" fill="#fff"/><circle cx="74.4" cy="52.5" r=".9" fill="#fff"/> <path d="M40 45.5 Q46 42 55.5 47" fill="none" stroke="#2a201a" stroke-width="4.6" stroke-linecap="round"/> <path d="M64.5 47 Q74 42 80 45.5" fill="none" stroke="#2a201a" stroke-width="4.6" stroke-linecap="round"/> <path d="M57 41 Q60 43 63 41" fill="none" stroke="#c98f66" stroke-width="1.6" stroke-linecap="round"/> <g stroke="#0b2a42" stroke-width="3" stroke-linejoin="round"> <path d="M24 38 Q18 10 60 9 Q102 10 96 38 Q80 30 60 30 Q40 30 24 38 Z" fill="#7e2531"/> <path d="M21 37 Q60 21 99 37 Q102 45 96 47 Q60 33 24 47 Q18 45 21 37 Z" fill="#5c1a24"/> </g> <path d="M36 19 Q48 13 62 13" fill="none" stroke="#a94456" stroke-width="3.2" stroke-linecap="round"/> <path d="M30 41 Q60 30 90 41" fill="none" stroke="#7e2e3b" stroke-width="2" stroke-linecap="round"/> </g> <circle cx="60" cy="60" r="58" fill="none" stroke="#0b2a42" stroke-width="3"/> </svg><div><h1 class="hometitle">Magellan</h1><span class="eyebrow" id="todayDate"></span></div></div>
+      <button type="button" class="modecard resume" id="resumeCard" hidden><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg></span><b id="resumeTitle">Back to your game</b><span class="mc-sub" id="resumeSub"></span><span class="mc-go" aria-hidden="true">›</span></button>
+      <button type="button" class="modecard daily" id="playBtn"><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z" fill="currentColor"/></svg></span><b>Daily voyage <span id="todayNum">#1</span></b><span class="mc-sub">Same 10 spots for everyone. Ranked worldwide.</span><span class="mc-status" id="dailyStatus"></span><span class="mc-go" aria-hidden="true">›</span></button>
+      <button type="button" class="modecard duel" id="h2hBtn"><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l10 10M20 4L10 14M6.5 16.5L4 19M17.5 16.5L20 19M5 13l6 6M19 13l-6 6"/></svg></span><b>Head to head</b><span class="mc-sub">Duel another sailor. 20,000 HP each.</span><span class="mc-status" id="duelStatus"></span><span class="mc-go" aria-hidden="true">›</span></button>
+      <button type="button" class="modecard friend" id="friendBtn" hidden><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="3"/><circle cx="16.5" cy="9" r="3"/><path d="M2.5 19c.8-3 3-4.5 5.5-4.5s4.7 1.5 5.5 4.5M12 17c.9-1.7 2.5-2.5 4.5-2.5 2.4 0 4.2 1.5 5 4.5"/></svg></span><b>Challenge a friend</b><span class="mc-sub">Send a link, duel live.</span><span class="mc-go" aria-hidden="true">›</span></button>
+      <button type="button" class="modecard practice" id="practiceBtn"><span class="mc-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg></span><b>Practice</b><span class="mc-sub">Random spots. Retry any of them.</span><span class="mc-go" aria-hidden="true">›</span></button>
       <p class="note" id="todayStreak"></p>
       <p class="note" id="todayH2h" hidden></p>
     </section>
     <div class="sticky-actions" id="menuBtns">
       <button class="primary" id="tutBtn" hidden>Try a practice voyage</button>
-      <button class="primary" id="playBtn">Play today's voyage</button>
-      <div class="modegrid" id="modeBtns"><button class="ghost vsbtn" id="h2hBtn">Head to head</button><button class="ghost vsbtn" id="friendBtn" hidden>Challenge a friend</button><button class="ghost" id="practiceBtn">Practice</button></div>
       <button class="linkbtn" id="howBtn" hidden>How to play</button>
       <button class="linkbtn" id="skipBtn" hidden>Skip to today's voyage</button>
-      <button class="ghost" id="backBtn" hidden>Back to the game</button>
+      <button class="primary" id="backBtn" hidden>Back</button>
       <button class="ghost" id="testBtn" hidden>Test upcoming voyages</button>
     </div>
   </div>
@@ -456,7 +485,7 @@ td.won { color: var(--coral-deep); font-weight: 900; }
         <button type="button" role="radio" data-level="normal" aria-checked="false">Medium</button>
         <button type="button" role="radio" data-level="hard" aria-checked="false">Hard</button>
         <span class="rl">While aiming</span><span data-level="easy">Spin the globe</span><span data-level="normal">Fixed globe</span><span data-level="hard">Fixed globe</span>
-        <span class="rl">Course line</span><span data-level="easy">Whole course</span><span data-level="normal">First 500 km</span><span data-level="hard">First 150 km</span>
+        <span class="rl">Course line</span><span data-level="easy">Whole course</span><span data-level="normal">First 2,500 km</span><span data-level="hard">First 1,000 km</span>
       </div>
     </div>
     <div class="btnrow lead"><button class="ghost" id="practiceCancel">Cancel</button><button class="primary" id="practiceGo">Start practice</button></div>
@@ -542,7 +571,7 @@ td.won { color: var(--coral-deep); font-weight: 900; }
       <div class="hist" id="hist"></div>
     </div>
     <p class="nextv" id="nextLine">Next voyage in<b id="countdown">--:--:--</b></p>
-    <button class="ghost" id="finSecondary" hidden>Today's voyage</button>
+    <button class="ghost" id="finSecondary">Home</button>
   </div>
 </div>
 
@@ -560,9 +589,9 @@ const SPOTS = 10, SAILS = 1, FULL = 1; // points scale straight with distance: 9
 // fixed = while aiming, the globe stays centred on the boat showing the whole hemisphere: no spinning, no zooming.
 // Daily voyages and duels always use Medium so everyone plays the same rules; the levels are practice settings.
 const LEVELS = {
-  easy: { id: 'easy', name: 'Easy', mult: 1, span: null, preview: 1500, course: true, fixed: false },
-  normal: { id: 'normal', name: 'Medium', mult: 1, span: null, preview: 500, course: false, fixed: true },
-  hard: { id: 'hard', name: 'Hard', mult: 1, span: null, preview: 150, course: false, fixed: true },
+  easy: { id: 'easy', name: 'Easy', mult: 1, span: null, preview: 2500, course: true, fixed: false },
+  normal: { id: 'normal', name: 'Medium', mult: 1, span: null, preview: 2500, course: false, fixed: true },
+  hard: { id: 'hard', name: 'Hard', mult: 1, span: null, preview: 1000, course: false, fixed: true },
 };
 const STANDARD = 'normal';
 const levelOf = id => LEVELS[id] || LEVELS.easy;
@@ -827,15 +856,6 @@ function drawLand() {
   c.beginPath(); g(detail ? visibleLand50() : LAND110);
   c.fillStyle = '#f1d98f'; c.fill();
   c.strokeStyle = '#b58f3e'; c.lineWidth = R > BASE * 3 ? 1.6 : 1.1; c.stroke();
-  // islands too small to see at this zoom still get a speck, so nothing in your way is invisible
-  const minr = 1.6 / R, ctr = [view.lon, view.lat];
-  c.fillStyle = '#f6e3a6'; c.beginPath();
-  for (const p of LAND50P) {
-    if (p.r - 0.01 > minr || d3.geoDistance(p.c, ctr) > Math.PI / 2 - 0.12) continue;
-    const q = proj(p.c); if (!q) continue;
-    c.moveTo(q[0] + 1.5, q[1]); c.arc(q[0], q[1], 1.5, 0, Math.PI * 2);
-  }
-  c.fill();
 }
 
 let LAND50P = [];
@@ -959,8 +979,8 @@ function frame(now) {
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(layer, 0, 0);
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   drawOverlays(ctx);
-  // the boat is drawn small, about yacht-sized against the coast, so it never hides an island
-  const boatSc = view.R < BASE * 0.7 ? 0.2 : view.R < BASE * 4 ? 0.26 : 0.32;
+  // the icon is only a marker: what sails and collides is a single point, as small as a real yacht
+  const boatSc = view.R < BASE * 0.7 ? 0.36 : 0.46;
   const drawAt = (pos, aground, hull) => {
     if (!pos || !visible(pos.lat, pos.lon)) return null;
     const p = proj([pos.lon, pos.lat]); if (!p) return null;
@@ -979,7 +999,7 @@ function frame(now) {
       const p = proj([b.lon, b.lat]);
       const pulse = reduceMotion ? 0.5 : (t * 0.8) % 1;
       ctx.strokeStyle = `rgba(255,255,255,${0.6 * (1 - pulse)})`; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(p[0], p[1], 6 + 14 * pulse, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(p[0], p[1], 10 + 18 * pulse, 0, Math.PI * 2); ctx.stroke();
     }
     drawAt(b, b.aground);
   }
@@ -1017,13 +1037,6 @@ function drawCloseup() {
   for (const p of LAND50P) if (d3.geoDistance(p.c, here) - p.r < 0.02) near.push(p.coords);
   c.fillStyle = '#1d6aa3'; c.fillRect(0, 0, w, w);
   c.beginPath(); g({ type: 'MultiPolygon', coordinates: near }); c.fillStyle = '#f1d98f'; c.fill(); c.strokeStyle = '#b58f3e'; c.lineWidth = 1.2; c.stroke();
-  // even the smallest islet gets a visible dot here
-  const sc = cuProj.scale(); c.beginPath();
-  for (const p of LAND50P) {
-    if ((p.r - 0.01) * sc > 2.5 || d3.geoDistance(p.c, here) > CLOSE_KM / RE) continue;
-    const q = cuProj(p.c); if (q) { c.moveTo(q[0] + 2.5, q[1]); c.arc(q[0], q[1], 2.5, 0, Math.PI * 2); }
-  }
-  c.fill(); c.stroke();
   c.beginPath(); g({ type: 'LineString', coordinates: routeCoords(cur.lat, cur.lon, heading, CLOSE_KM * 0.7, 1) });
   c.lineCap = 'round'; c.strokeStyle = 'rgba(6,30,50,.45)'; c.lineWidth = 4; c.stroke();
   c.strokeStyle = '#ffffff'; c.lineWidth = 2.2; c.setLineDash([1, 5]); c.stroke(); c.setLineDash([]);
@@ -1080,6 +1093,7 @@ document.addEventListener('keydown', e => {
     if (!$('practiceSheet').hidden) { $('practiceCancel').click(); return; }
     if (!$('tests').hidden) { $('testsClose').click(); return; }
     if (!$('menu').hidden && !$('backBtn').hidden) { $('backBtn').click(); return; }
+    if (!$('menu').hidden && !$('resumeCard').hidden && !$('today').hidden) { $('resumeCard').click(); return; }
   }
   const tagN = (document.activeElement && document.activeElement.tagName) || '';
   if (e.key === 'Enter' && game && game.phase === 'reveal' && tagN !== 'BUTTON' && !anySheet()) { nextSpot(); e.preventDefault(); return; }
@@ -1344,7 +1358,7 @@ function reveal(restored) {
     const dd = b.d - r.sails[r.sails.length - 2].d;
     note = (dd > 0 ? `${fmt(dd)} km further than your last try. ` : dd < 0 ? `${fmt(-dd)} km shorter than your last try. ` : 'Same distance as your last try. ') + note;
   }
-  if (tut) note = (b.d >= s.best ? 'You found it! ' : '') + `The dashed green line is the longest voyage possible from here: ${fmt(s.best)} km to Papua New Guinea, more than halfway round the world. Every spot has one, and matching it scores 5,000 points. Try again, or start today's voyage.`;
+  if (tut) note = (b.d >= s.best ? 'You found it! ' : '') + `The dashed green line is the longest voyage possible from here: ${fmt(s.best)} km to Papua New Guinea, more than halfway round the world. Every spot has one, and matching it scores 5,000 points. Try again, or carry on to pick a game.`;
   if (h2h) {
     const went = t => t.replace(/^Ran aground/, 'ran aground').replace(/^Sailed right/, 'sailed right');
     note = `${o.name} ${went(landfallText(r.opp.hit).title)}.` + (roundMult(game.round + 1) > roundMult(game.round) && !matchOver(game) ? ` Next round, damage ×${roundMult(game.round + 1)}.` : '') + (miss ? ' ' + miss : '');
@@ -1353,7 +1367,7 @@ function reveal(restored) {
   drawRose(b);
   const canRetry = game.mode === 'practice' || tut;
   $('retryBtn').hidden = !canRetry; $('revBtns').style.gridTemplateColumns = canRetry ? '' : '1fr';
-  $('nextBtn').textContent = tut ? "Today's voyage" : h2h ? (matchOver(game) ? 'See result' : `Round ${game.round + 2}`)
+  $('nextBtn').textContent = tut ? 'Continue' : h2h ? (matchOver(game) ? 'See result' : `Round ${game.round + 2}`)
     : game.round + 1 >= spotsIn(game) ? 'See final score' : 'Next spot';
   showCard('revealCard');
   stopFly(false);
@@ -1442,7 +1456,7 @@ function startTutorial() {
   game = { mode: 'tutorial', n: 0, level: STANDARD, picks: [TUT], rounds: newRounds(1), round: 0, phase: 'arriving' };
   closeSheets(); arrive(false);
 }
-function endTutorial() { store.seen = true; store.tutDone = true; saveStore(); startDaily(); }
+function endTutorial() { store.seen = true; store.tutDone = true; saveStore(); resetModes(); game = null; cur = null; showCard(null); showHint(''); updateHud(); openMenu('today'); }
 
 // ================= duels (head to head) =================
 // Both sailors start with 20,000 HP. Each round the shorter voyage loses the difference in km, multiplied from round 5 on.
@@ -1867,11 +1881,8 @@ function showMatchFinal() {
   for (const [v, l] of [[played, 'Played'], [h.w, 'Won'], [h.l, 'Lost'], [played ? Math.round(100 * h.w / played) + '%' : '-', 'Win rate']]) {
     const d = document.createElement('div'); const b = document.createElement('b'); b.textContent = v; const sp = document.createElement('span'); sp.textContent = l; d.append(b, sp); $('statGrid').appendChild(d);
   }
-  const todayDone = !!(dayRecord(todayNum()) && dayRecord(todayNum()).done);
   $('finPrimary').disabled = false;
   $('finPrimary').textContent = friend ? 'Rematch' : 'New duel'; $('finPrimary').dataset.act = friend ? 'rematch' : 'h2h';
-  $('finSecondary').hidden = todayDone;
-  $('finSecondary').textContent = dayRecord(todayNum()) ? `Continue voyage #${todayNum()}` : `Play voyage #${todayNum()}`;
   $('nextLine').hidden = true; $('worldBlock').hidden = true; worldPct = null;
   $('copyFallback').hidden = true; $('copyBtn').textContent = 'Copy result';
   $('final').hidden = false; $('menu').hidden = true;
@@ -1916,11 +1927,8 @@ function showFinal() {
       row.append(s, bar); h.appendChild(row);
     });
   }
-  const todayDone = !!(dayRecord(todayNum()) && dayRecord(todayNum()).done);
   $('finPrimary').textContent = daily ? 'Practice' : 'Practice again';
   $('finPrimary').dataset.act = 'practice';
-  $('finSecondary').hidden = daily || todayDone;
-  $('finSecondary').textContent = dayRecord(todayNum()) ? `Continue voyage #${todayNum()}` : `Play voyage #${todayNum()}`;
   $('nextLine').hidden = !daily;
   $('copyFallback').hidden = true; $('copyBtn').textContent = 'Copy result';
   $('final').hidden = false; $('menu').hidden = true;
@@ -2046,28 +2054,39 @@ function startPractice() {
   game = { mode: 'practice', n: 0, level: store.level || 'easy', picks: practicePicks(), rounds: newRounds(), round: 0, phase: 'arriving' };
   closeSheets(); arrive(false);
 }
+// kind: welcome (first visit) | today (the home page) | howto (full instructions)
 function openMenu(kind) {
+  if (kind === 'help') kind = 'today';
   const n = todayNum(); const rec = dayRecord(n);
-  const inGame = game && game.phase !== 'final' && kind === 'help';
-  $('welcome').hidden = kind !== 'welcome';
-  $('howto').hidden = !(kind === 'howto' || kind === 'help');
+  const welcome = kind === 'welcome';
+  $('welcome').hidden = !welcome;
+  $('howto').hidden = kind !== 'howto';
   $('today').hidden = kind !== 'today';
   $('todayNum').textContent = '#' + n;
   $('todayDate').textContent = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
   const st = statsFor();
-  $('todayStreak').textContent = st.played ? `Streak ${st.streak} · Played ${st.played} · Average ${fmt(st.avg)}` : '';
+  $('todayStreak').textContent = st.played ? `Daily voyages: streak ${st.streak} · played ${st.played} · average ${fmt(st.avg)}` : '';
   $('todayStreak').hidden = !st.played;
   const h = store.h2h, hp = h ? h.w + h.l + h.d : 0;
   $('todayH2h').hidden = !hp; if (hp) $('todayH2h').textContent = `Duels: won ${h.w}, lost ${h.l}` + (h.d ? `, drew ${h.d}` : '');
-  $('playBtn').textContent = rec && rec.done ? `See voyage #${n} result` : rec ? `Continue voyage #${n}` : `Play voyage #${n}`;
-  $('h2hBtn').textContent = matchLive() ? `Continue vs ${store.match.opp.name}` : 'Head to head';
-  const welcome = kind === 'welcome';
+  // what each card will do
+  const doneSpots = rec ? rec.rounds.filter(r => r.done).length : 0;
+  $('dailyStatus').textContent = rec && rec.done ? `Done: ${fmt(rec.total)} points · see your result` : rec ? `${doneSpots} of ${SPOTS} spots sailed · carry on` : '';
+  $('duelStatus').textContent = matchLive() ? `Duel under way vs ${store.match.opp.name} · carry on` : '';
+  // a game in progress can be picked up again from here
+  const live = !!(game && cur && game.phase !== 'final' && kind === 'today');
+  $('resumeCard').hidden = !live;
+  if (live) {
+    const what = game.mode === 'daily' ? `voyage #${game.n}` : game.mode === 'h2h' ? `your duel vs ${game.opp.name}` : game.mode === 'tutorial' ? 'the practice voyage' : game.mode === 'test' ? `test voyage #${game.n}` : 'practice';
+    $('resumeTitle').textContent = 'Back to ' + what;
+    $('resumeSub').textContent = game.mode === 'h2h' ? `Round ${game.round + 1}` : game.mode === 'tutorial' ? 'Nothing counts' : `Spot ${game.round + 1} of ${spotsIn(game)}`;
+  }
+  $('friendBtn').hidden = !ONLINE;
   $('tutBtn').hidden = !welcome; $('skipBtn').hidden = !welcome;
-  $('playBtn').hidden = inGame || welcome; $('modeBtns').hidden = inGame || welcome; $('backBtn').hidden = !inGame;
-  $('friendBtn').hidden = !ONLINE; $('practiceBtn').classList.toggle('wide', ONLINE);
   $('howBtn').hidden = kind !== 'today';
-  $('testBtn').style.display = inGame || welcome ? 'none' : '';
-  closeSheets(); $('menu').hidden = false;
+  $('backBtn').hidden = kind !== 'howto' || (!store.seen && !game);
+  $('testBtn').style.display = kind === 'today' ? '' : 'none';
+  closeSheets(); $('menu').hidden = false; $('menu').classList.toggle('homeview', kind === 'today');
   $('menu').querySelector('.card').scrollTop = 0;
   if (!$('howto').hidden) startDemo();
 }
@@ -2124,15 +2143,16 @@ $('lobbyCancel').onclick = closeLobby;
 $('copyLinkBtn').onclick = copyLink;
 $('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); lobbyGo(); } });
 $('howBtn').onclick = () => openMenu('howto');
-$('backBtn').onclick = () => closeMenu();
-$('helpBtn').onclick = () => openMenu(game && game.phase !== 'final' ? 'help' : 'howto');
+$('backBtn').onclick = () => openMenu('today');
+$('helpBtn').onclick = () => openMenu(store.seen || game ? 'today' : 'welcome');
+$('resumeCard').onclick = () => { $('menu').hidden = true; };
 $('sailBtn').onclick = () => { if (game && game.phase === 'locked' && game.canClaim) claimWin(); else setSail(); };
 $('nextBtn').onclick = nextSpot; $('retryBtn').onclick = retrySpot;
 $('finPrimary').onclick = () => {
   const a = $('finPrimary').dataset.act;
   if (a === 'daily') startDaily(); else if (a === 'h2h') openMatchmaking(); else if (a === 'rematch') rematch(); else startPractice();
 };
-$('finSecondary').onclick = () => startDaily();
+$('finSecondary').onclick = () => openMenu('today');
 
 // ================= intro demo: aim, sail dead straight, run aground =================
 // Cape Clear, Ireland, at 208.2°: 24,995 km to Papua New Guinea, worked out by the same physics as the game
